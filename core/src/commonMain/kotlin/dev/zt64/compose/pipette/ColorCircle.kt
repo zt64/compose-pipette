@@ -65,7 +65,7 @@ public fun ColorCircle(
 
     Box(
         modifier = modifier
-            .size(100.dp)
+            .size(128.dp)
             .onGloballyPositioned {
                 radius = it.size.width.toFloat() / 2f
             }

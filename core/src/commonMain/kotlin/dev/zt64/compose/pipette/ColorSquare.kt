@@ -57,7 +57,7 @@ public fun ColorSquare(
 
     Box(
         modifier = modifier
-            .size(100.dp)
+            .size(128.dp)
             .onSizeChanged { size = it }
             .pointerInput(Unit) {
                 detectTapGestures(

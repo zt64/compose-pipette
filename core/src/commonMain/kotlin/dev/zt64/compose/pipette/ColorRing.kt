@@ -84,7 +84,7 @@ public fun ColorRing(
 
     Box(
         modifier = modifier
-            .size(100.dp)
+            .size(128.dp)
             .onSizeChanged {
                 radius = (it.width - strokeWidth) / 2f
                 center = Offset(it.width / 2f, it.height / 2f)
