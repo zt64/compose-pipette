@@ -54,6 +54,18 @@ public fun ColorSquare(
 ) {
     val scope = rememberCoroutineScope()
     var size by remember { mutableStateOf(IntSize.Zero) }
+    val saturationBrush = remember {
+        Brush.verticalGradient(listOf(Color.Transparent, Color.Black))
+    }
+
+    val hueBrush = remember(hue) {
+        Brush.horizontalGradient(
+            listOf(
+                Color.Transparent,
+                Color.hsv(hue, 1f, 1f)
+            )
+        )
+    }
 
     Box(
         modifier = modifier
@@ -100,15 +112,8 @@ public fun ColorSquare(
             .drawWithCache {
                 onDrawBehind {
                     drawRect(Color.White)
-                    drawRect(
-                        Brush.horizontalGradient(
-                            listOf(
-                                Color.Transparent,
-                                Color.hsv(hue, 1f, 1f)
-                            )
-                        )
-                    )
-                    drawRect(Brush.verticalGradient(listOf(Color.Transparent, Color.Black)))
+                    drawRect(hueBrush)
+                    drawRect(saturationBrush)
                 }
             }
     ) {

@@ -50,17 +50,22 @@ public fun ColorCircle(
     val scope = rememberCoroutineScope()
     val color by rememberUpdatedState(color)
     var radius by rememberSaveable { mutableStateOf(0f) }
+    val value by remember { derivedStateOf { color.hsvValue } }
 
-    val brush = remember(color) {
+    val hueBrush = remember(value) {
         Brush.sweepGradient(
             colors = List(7) { i ->
                 Color.hsv(
                     hue = i * 60f,
                     saturation = 1f,
-                    value = color.hsvValue
+                    value = value
                 )
             }
         )
+    }
+
+    val saturationBrush = remember(value) {
+        Brush.radialGradient(listOf(Color.hsv(0f, 0f, value), Color.Transparent))
     }
 
     Box(
@@ -106,8 +111,8 @@ public fun ColorCircle(
             }
             .drawWithCache {
                 onDrawBehind {
-                    drawCircle(brush)
-                    drawCircle(Brush.radialGradient(listOf(Color.hsv(0f, 0f, color.hsvValue), Color.Transparent)))
+                    drawCircle(hueBrush)
+                    drawCircle(saturationBrush)
                 }
             }
     ) {
