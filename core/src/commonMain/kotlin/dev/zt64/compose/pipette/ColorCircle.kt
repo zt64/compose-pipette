@@ -48,9 +48,9 @@ public fun ColorCircle(
     }
 ) {
     val scope = rememberCoroutineScope()
-    val color by rememberUpdatedState(color)
+    val updatedColor by rememberUpdatedState(color)
     var radius by rememberSaveable { mutableStateOf(0f) }
-    val value by remember { derivedStateOf { color.hsvValue } }
+    val value by remember { derivedStateOf { updatedColor.hsvValue } }
 
     val hueBrush = remember(value) {
         Brush.sweepGradient(
@@ -76,7 +76,7 @@ public fun ColorCircle(
             }
             .pointerInput(Unit) {
                 detectTapGestures { tapPosition ->
-                    val newColor = colorForPosition(tapPosition, radius, color.hsvValue)
+                    val newColor = colorForPosition(tapPosition, radius, updatedColor.hsvValue)
                     if (newColor.isSpecified) onColorChange(newColor)
                 }
             }
@@ -105,7 +105,7 @@ public fun ColorCircle(
                 ) { change, _ ->
                     change.consume()
                     val newPosition = clampPositionToRadius(change.position, radius)
-                    val newColor = colorForPosition(newPosition, radius, color.hsvValue)
+                    val newColor = colorForPosition(newPosition, radius, updatedColor.hsvValue)
                     if (newColor.isSpecified) onColorChange(newColor)
                 }
             }
@@ -116,9 +116,9 @@ public fun ColorCircle(
                 }
             }
     ) {
-        val position = remember(color, radius) {
-            val angle = color.hue * (PI / 180).toFloat()
-            val distance = color.saturation * radius
+        val position = remember(updatedColor, radius) {
+            val angle = updatedColor.hue * (PI / 180).toFloat()
+            val distance = updatedColor.saturation * radius
 
             Offset(
                 x = radius + distance * cos(angle),
@@ -131,7 +131,7 @@ public fun ColorCircle(
                 IntOffset(position.x.roundToInt(), position.y.roundToInt())
             }
         ) {
-            thumb(color)
+            thumb(updatedColor)
         }
     }
 }
