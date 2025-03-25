@@ -10,10 +10,14 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorProducer
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.materialkolor.DynamicMaterialTheme
 import com.materialkolor.PaletteStyle
+import dev.zt64.compose.pipette.util.hsvValue
+import dev.zt64.compose.pipette.util.hue
+import dev.zt64.compose.pipette.util.saturation
 
 @Stable
 enum class Theme(val icon: ImageVector, val label: String) {
@@ -26,7 +30,17 @@ enum class Theme(val icon: ImageVector, val label: String) {
 fun Theme(color: ColorProducer, theme: Theme, useDynamicTheme: Boolean, content: @Composable () -> Unit) {
     if (useDynamicTheme) {
         DynamicMaterialTheme(
-            seedColor = color(),
+            seedColor = color().let {
+                if (it.saturation < 0.5f || it.hsvValue < 0.5f) {
+                    Color.hsv(
+                        hue = it.hue,
+                        saturation = it.saturation.coerceAtLeast(0.5f),
+                        value = it.hsvValue.coerceAtLeast(0.5f)
+                    )
+                } else {
+                    it
+                }
+            },
             useDarkTheme = theme == Theme.DARK || theme == Theme.SYSTEM && isSystemInDarkTheme(),
             style = PaletteStyle.Fidelity,
             content = content
