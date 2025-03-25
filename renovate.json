@@ -6,5 +6,15 @@
         ":automergeMinor",
         ":automergeDigest",
         "schedule:automergeDaily"
+    ],
+    "packageRules": [
+        {
+            "matchPackagePatterns": [
+                "^com.android.tools.build:gradle$",
+                "^com.android:android-gradle$",
+                "^com.android.application$"
+            ],
+            "enabled": false
+        }
     ]
 }
