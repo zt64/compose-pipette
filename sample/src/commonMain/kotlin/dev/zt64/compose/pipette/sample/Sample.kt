@@ -106,23 +106,6 @@ fun Sample() {
                         }
                     }
                 )
-            },
-            floatingActionButton = {
-                ExtendedFloatingActionButton(
-                    onClick = {
-                        val h = (0..359).random().toFloat()
-                        val s = (20..100).random().toFloat() / 100f
-
-                        hsvColor = HsvColor(h, s, 1f)
-                    },
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Default.Refresh,
-                            contentDescription = null
-                        )
-                    },
-                    text = { Text("Randomize") }
-                )
             }
         ) { paddingValues ->
             Box(
@@ -278,6 +261,22 @@ fun Sample() {
                             )
                         )
                     )
+
+                    Button(
+                        onClick = {
+                            val h = (0..359).random().toFloat()
+                            val s = (20..100).random().toFloat() / 100f
+
+                            hsvColor = HsvColor(h, s, 1f)
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Refresh,
+                            contentDescription = null
+                        )
+                        Spacer(Modifier.width(ButtonDefaults.IconSpacing))
+                        Text("Randomize")
+                    }
                 }
             }
         }
