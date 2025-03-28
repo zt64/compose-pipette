@@ -38,6 +38,9 @@ import kotlin.math.roundToInt
  * @param interactionSource The interaction source for the color square
  * @param thumb Composable that is used to draw the thumb
  * @param onColorChangeFinished Callback that is called when the user finishes changing the color
+ *
+ * @see ColorCircle
+ * @see ColorRing
  */
 @Composable
 public fun ColorSquare(

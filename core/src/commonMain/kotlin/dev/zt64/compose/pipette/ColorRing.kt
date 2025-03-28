@@ -40,6 +40,9 @@ import kotlin.math.*
  * @param ringStrokeWidth The width of the ring
  * @param thumb The composable that is used to draw the thumb
  * @param onColorChangeFinished Callback that is called when the user finishes changing the color
+ *
+ * @see ColorCircle
+ * @see ColorSquare
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
