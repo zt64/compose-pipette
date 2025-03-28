@@ -17,30 +17,33 @@ Supported platforms:
 
 ## Styles
 
-Compose-pipette comes with three different components for selecting colors: `ColorCircle`, `ColorSquare` and`ColorRing`.
-Each component has a `thumb` parameter for passing a custom composable to be used for the thumb component.
+Compose-pipette comes with three different components for selecting colors: `CircularColorPicker`, `SquareColorPicker`
+and `RingColorPicker`. Each component has a `thumb` parameter for passing a custom composable to be used for the thumb
+component.
 
-#### Color Circle
+#### Circular Color Picker
 
-The `ColorCircle` component is a simple circle that allows the user to select a color by dragging a point around the
+The `CircularColorPicker` component is a simple circle that allows the user to select a color by dragging a point around
+the
 circle. The circle allows for control over the hue and saturation of the color.
 
 ```kotlin
 var color by remember { mutableStateOf(Color.Red) }
 
-ColorCircle(
+CircularColorPicker(
     color = color,
     onColorChange = { color = it }
 )
 ```
 
-#### Color Square
+#### Square Color Picker
 
-The `ColorSquare` component is a square that allows the user to select a color by dragging a point around the square.
+The `SquareColorPicker` component is a square that allows the user to select a color by dragging a point around the
+square.
 The square allows for control over the saturation and value of the color.
 
 > [!NOTE]
-> Due to how Compose stores the color, it is not possible to use the `ColorSquare` component with the `Color`
+> Due to how Compose stores the color, it is not possible to use the `SquareColorPicker` component with the `Color`
 > class. At low saturation and value values, `Color` fails to represent the color correctly.
 > Instead, the hue, saturation and value components of the color need to be extracted and stored separately.
 
@@ -52,7 +55,7 @@ var color = remember(hue, saturation, value) {
     Color.hsv(hue, saturation, value)
 }
 
-ColorSquare(
+SquareColorPicker(
     hue = hue,
     saturation = saturation,
     value = value,
@@ -64,15 +67,16 @@ ColorSquare(
 )
 ```
 
-#### Color Ring
+#### Ring Color Picker
 
-The `ColorRing` component is a ring that allows the user to select a color by dragging a point around the ring.
-Only the hue of the color can be changed with this component. For saturation control, use the `ColorCircle` component.
+The `RingColorPicker` component is a ring that allows the user to select a color by dragging a point around the ring.
+Only the hue of the color can be changed with this component. For saturation control, use the `CircularColorPicker`
+component.
 
 ```kotlin
 var color by remember { mutableStateOf(Color.Red) }
 
-ColorRing(
+RingColorPicker(
     color = color,
     onColorChange = { color = it }
 )

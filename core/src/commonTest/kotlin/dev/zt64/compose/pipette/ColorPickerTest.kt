@@ -15,16 +15,16 @@ import kotlin.math.round
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-private const val TEST_TAG = "colorSquare"
+private const val TEST_TAG = "squareColorPicker"
 
 @OptIn(ExperimentalTestApi::class)
 class ColorPickerTest {
     @Test
-    fun testColorSquare() = runComposeUiTest {
+    fun testSquarePicker() = runComposeUiTest {
         var color by mutableStateOf(Color.Red)
 
         setContent {
-            ColorSquare(
+            SquareColorPicker(
                 modifier = Modifier.testTag(TEST_TAG),
                 hue = color.hue,
                 saturation = color.saturation,

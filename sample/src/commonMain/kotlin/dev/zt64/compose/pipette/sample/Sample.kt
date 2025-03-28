@@ -18,9 +18,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
-import dev.zt64.compose.pipette.ColorCircle
-import dev.zt64.compose.pipette.ColorRing
-import dev.zt64.compose.pipette.ColorSquare
+import dev.zt64.compose.pipette.CircularColorPicker
+import dev.zt64.compose.pipette.RingColorPicker
+import dev.zt64.compose.pipette.SquareColorPicker
 import dev.zt64.compose.pipette.util.hsvValue
 import dev.zt64.compose.pipette.util.hue
 import dev.zt64.compose.pipette.util.saturation
@@ -164,11 +164,11 @@ fun Sample() {
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Text("Color Circle")
+                            Text("CircularColorPicker")
 
                             Spacer(Modifier.height(6.dp))
 
-                            ColorCircle(
+                            CircularColorPicker(
                                 color = color,
                                 onColorChange = { newColor ->
                                     hsvColor = hsvColor.copy(
@@ -182,11 +182,11 @@ fun Sample() {
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Text("Color Square")
+                            Text("SquareColorPicker")
 
                             Spacer(Modifier.height(6.dp))
 
-                            ColorSquare(
+                            SquareColorPicker(
                                 hue = hsvColor.hue,
                                 saturation = hsvColor.saturation,
                                 value = hsvColor.value,
@@ -199,11 +199,11 @@ fun Sample() {
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Text("Color Ring")
+                            Text("RingColorPicker")
 
                             Spacer(Modifier.height(6.dp))
 
-                            ColorRing(
+                            RingColorPicker(
                                 color = color,
                                 onColorChange = { newColor ->
                                     hsvColor = hsvColor.copy(first = newColor.hue)

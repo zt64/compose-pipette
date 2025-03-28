@@ -28,25 +28,25 @@ import kotlinx.coroutines.launch
 import kotlin.math.*
 
 /**
- * A color ring that allows the user to select a hue by rotating a handle around the ring. The color
- * ring is a continuous gradient of colors from red to red.
+ * A ring color picker that allows the user to select a hue by rotating a handle around the ring. The ring is
+ * a continuous gradient of colors from red to red.
  *
- * To be able to also control the saturation, use the [ColorCircle] composable.
+ * To be able to also control the saturation, use the [CircularColorPicker] composable.
  *
  * @param color The current color
  * @param onColorChange Callback that is called when the color changes
- * @param modifier The modifier to be applied to the color ring
- * @param interactionSource The interaction source for the color ring
+ * @param modifier The modifier to be applied to the color picker
+ * @param interactionSource The interaction source for the color picker
  * @param ringStrokeWidth The width of the ring
  * @param thumb The composable that is used to draw the thumb
  * @param onColorChangeFinished Callback that is called when the user finishes changing the color
  *
- * @see ColorCircle
- * @see ColorSquare
+ * @see CircularColorPicker
+ * @see SquareColorPicker
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-public fun ColorRing(
+public fun RingColorPicker(
     color: Color,
     onColorChange: (Color) -> Unit,
     modifier: Modifier = Modifier,
@@ -62,7 +62,7 @@ public fun ColorRing(
     val saturation by remember { derivedStateOf { updatedColor.saturation } }
     val value by remember { derivedStateOf { updatedColor.hsvValue } }
 
-    ColorRing(
+    RingColorPicker(
         hue = hue,
         saturation = saturation,
         value = value,
@@ -76,26 +76,26 @@ public fun ColorRing(
 }
 
 /**
- * A color ring that allows the user to select a hue by rotating a handle around the ring. The color
- * ring is a continuous gradient of colors from red to red.
+ * A ring color picker that allows the user to select a hue by rotating a handle around the ring. The ring is
+ * a continuous gradient of colors from red to red.
  *
- * To be able to also control the saturation, use the [ColorCircle] composable.
+ * To be able to also control the saturation, use the [CircularColorPicker] composable.
  *
  * @param hue The hue of the color
  * @param saturation The saturation of the color
  * @param value The value of the color
  * @param onHueChange Callback that is called when the hue changes
- * @param modifier The modifier to be applied to the color ring
- * @param interactionSource The interaction source for the color ring
+ * @param modifier The modifier to be applied to the color picker
+ * @param interactionSource The interaction source for the color picker
  * @param ringStrokeWidth The width of the ring
  * @param thumb The composable that is used to draw the thumb
  * @param onColorChangeFinished Callback that is called when the user finishes changing the color
  *
- * @see ColorCircle
- * @see ColorSquare
+ * @see CircularColorPicker
+ * @see SquareColorPicker
  */
 @Composable
-public fun ColorRing(
+public fun RingColorPicker(
     hue: Float,
     saturation: Float = 1f,
     value: Float = 1f,

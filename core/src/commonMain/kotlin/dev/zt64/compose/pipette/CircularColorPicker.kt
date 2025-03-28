@@ -24,21 +24,21 @@ import kotlinx.coroutines.launch
 import kotlin.math.*
 
 /**
- * Color circle that allows the user to select a hue by dragging a thumb around the circle.
+ * Circular color picker that allows the user to select a hue by dragging a thumb around the circle.
  * The color is represented in HSV color space with a fixed value.
  *
  * @param color The current color
  * @param onColorChange Callback that is called when the color changes
- * @param modifier The modifier to be applied to the color circle
- * @param interactionSource The interaction source for the color circle
+ * @param modifier The modifier to be applied to the color picker
+ * @param interactionSource The interaction source for the color picker
  * @param onColorChangeFinished Callback that is called when the user finishes changing the color
  * @param thumb Composable that is used to draw the thumb
  *
- * @see ColorRing
- * @see ColorSquare
+ * @see RingColorPicker
+ * @see SquareColorPicker
  */
 @Composable
-public fun ColorCircle(
+public fun CircularColorPicker(
     color: Color,
     onColorChange: (Color) -> Unit,
     modifier: Modifier = Modifier,
@@ -53,7 +53,7 @@ public fun ColorCircle(
     val saturation by remember { derivedStateOf { updatedColor.saturation } }
     val value by remember { derivedStateOf { updatedColor.hsvValue } }
 
-    ColorCircle(
+    CircularColorPicker(
         hue = hue,
         saturation = saturation,
         value = value,
@@ -66,23 +66,23 @@ public fun ColorCircle(
 }
 
 /**
- * Color circle that allows the user to select a hue by dragging a thumb around the circle.
+ * Circular color picker that allows the user to select a hue by dragging a thumb around the circle.
  * The color is represented in HSV color space with a fixed value.
  *
  * @param hue The hue of the color
  * @param saturation The saturation of the color
  * @param value The value of the color
  * @param onColorChange Callback that is called when the color changes
- * @param modifier The modifier to be applied to the color circle
- * @param interactionSource The interaction source for the color circle
+ * @param modifier The modifier to be applied to the color picker
+ * @param interactionSource The interaction source for the color picker
  * @param onColorChangeFinished Callback that is called when the user finishes changing the color
  * @param thumb Composable that is used to draw the thumb
  *
- * @see ColorRing
- * @see ColorSquare
+ * @see RingColorPicker
+ * @see SquareColorPicker
  */
 @Composable
-public fun ColorCircle(
+public fun CircularColorPicker(
     hue: Float,
     saturation: Float,
     value: Float = 1f,

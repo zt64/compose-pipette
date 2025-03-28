@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 /**
- * Standard color picker that allows the user to select a color by dragging a thumb around the color space.
+ * The standard square color picker that allows the user to select a color by dragging a thumb around the color space.
  *
  * The color is represented in HSV color space with a fixed hue. The saturation and value can be controlled by
  * dragging the thumb.
@@ -34,16 +34,16 @@ import kotlin.math.roundToInt
  * @param saturation The saturation of the color
  * @param value The value of the color
  * @param onColorChange Callback that is called when the color changes
- * @param modifier The modifier to be applied to the color square
- * @param interactionSource The interaction source for the color square
+ * @param modifier The modifier to be applied to the color picker
+ * @param interactionSource The interaction source for the color picker
  * @param thumb Composable that is used to draw the thumb
  * @param onColorChangeFinished Callback that is called when the user finishes changing the color
  *
- * @see ColorCircle
- * @see ColorRing
+ * @see CircularColorPicker
+ * @see RingColorPicker
  */
 @Composable
-public fun ColorSquare(
+public fun SquareColorPicker(
     hue: Float,
     saturation: Float,
     value: Float,
