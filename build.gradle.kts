@@ -12,6 +12,6 @@ plugins {
 }
 
 allprojects {
-    version = "1.0.0-alpha02"
     group = "dev.zt64.compose.pipette"
+    version = "1.0.0-beta01"
 }
