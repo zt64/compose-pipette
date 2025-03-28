@@ -57,32 +57,82 @@ public fun ColorRing(
     },
     onColorChangeFinished: () -> Unit = {}
 ) {
-    val color by rememberUpdatedState(color)
+    val updatedColor by rememberUpdatedState(color)
+    val hue by remember { derivedStateOf { updatedColor.hue } }
+    val saturation by remember { derivedStateOf { updatedColor.saturation } }
+    val value by remember { derivedStateOf { updatedColor.hsvValue } }
+
+    ColorRing(
+        hue = hue,
+        saturation = saturation,
+        value = value,
+        onHueChange = { hue -> onColorChange(Color.hsv(hue, saturation, value)) },
+        modifier = modifier,
+        interactionSource = interactionSource,
+        ringStrokeWidth = ringStrokeWidth,
+        thumb = thumb,
+        onColorChangeFinished = onColorChangeFinished
+    )
+}
+
+/**
+ * A color ring that allows the user to select a hue by rotating a handle around the ring. The color
+ * ring is a continuous gradient of colors from red to red.
+ *
+ * To be able to also control the saturation, use the [ColorCircle] composable.
+ *
+ * @param hue The hue of the color
+ * @param saturation The saturation of the color
+ * @param value The value of the color
+ * @param onHueChange Callback that is called when the hue changes
+ * @param modifier The modifier to be applied to the color ring
+ * @param interactionSource The interaction source for the color ring
+ * @param ringStrokeWidth The width of the ring
+ * @param thumb The composable that is used to draw the thumb
+ * @param onColorChangeFinished Callback that is called when the user finishes changing the color
+ *
+ * @see ColorCircle
+ * @see ColorSquare
+ */
+@Composable
+public fun ColorRing(
+    hue: Float,
+    saturation: Float = 1f,
+    value: Float = 1f,
+    onHueChange: (Float) -> Unit,
+    modifier: Modifier = Modifier,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    ringStrokeWidth: Dp = 16.dp,
+    thumb: @Composable () -> Unit = {
+        ColorPickerDefaults.Thumb(Color.hsv(hue, saturation, value), interactionSource)
+    },
+    onColorChangeFinished: () -> Unit = {}
+) {
+    val scope = rememberCoroutineScope()
     var radius by remember { mutableStateOf(0f) }
     var center by remember { mutableStateOf(Offset.Zero) }
-    val scope = rememberCoroutineScope()
     val strokeWidth = with(LocalDensity.current) { ringStrokeWidth.toPx() }
 
-    val brush = remember(color) {
+    val brush = remember(saturation, value) {
         Brush.sweepGradient(
             List(7) {
                 Color.hsv(
                     hue = (it * 60).toFloat(),
-                    saturation = color.saturation,
-                    value = color.hsvValue
+                    saturation = saturation,
+                    value = value
                 )
             }
         )
     }
 
     fun updateHandlePosition(position: Offset) {
-        onColorChange(
-            Color.hsv(
-                hue = getRotationAngle(position, center),
-                saturation = color.saturation,
-                value = color.hsvValue
-            )
-        )
+        val (dx, dy) = position - center
+        val theta = atan2(dy, dx)
+        var angle = theta * (180.0 / PI).toFloat()
+
+        if (angle < 0) angle += 360f
+
+        onHueChange(angle)
     }
 
     Box(
@@ -137,22 +187,14 @@ public fun ColorRing(
     ) {
         Box(
             modifier = Modifier.offset {
-                val rad = color.hue * (PI / 180f).toFloat()
-                val handleOffset = center + Offset(radius * cos(rad), radius * sin(rad))
-                IntOffset(handleOffset.x.roundToInt(), handleOffset.y.roundToInt())
+                val rad = hue * (PI / 180).toFloat()
+                val x = center.x + radius * cos(rad)
+                val y = center.y + radius * sin(rad)
+
+                IntOffset(x.roundToInt(), y.roundToInt())
             }
         ) {
             thumb()
         }
     }
-}
-
-private fun getRotationAngle(currentPosition: Offset, center: Offset): Float {
-    val (dx, dy) = currentPosition - center
-    val theta = atan2(dy, dx)
-    var angle = theta * (180.0 / PI).toFloat()
-
-    if (angle < 0) angle += 360f
-
-    return angle
 }

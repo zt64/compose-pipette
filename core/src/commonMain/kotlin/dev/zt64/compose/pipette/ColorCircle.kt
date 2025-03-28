@@ -8,13 +8,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.isSpecified
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntOffset
@@ -27,7 +25,7 @@ import kotlin.math.*
 
 /**
  * Color circle that allows the user to select a hue by dragging a thumb around the circle.
- * The color is represented in HSV color space with a fixed saturation and value.
+ * The color is represented in HSV color space with a fixed value.
  *
  * @param color The current color
  * @param onColorChange Callback that is called when the color changes
@@ -46,14 +44,58 @@ public fun ColorCircle(
     modifier: Modifier = Modifier,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     onColorChangeFinished: () -> Unit = {},
-    thumb: @Composable (Color) -> Unit = {
+    thumb: @Composable () -> Unit = {
         ColorPickerDefaults.Thumb(color, interactionSource)
     }
 ) {
-    val scope = rememberCoroutineScope()
     val updatedColor by rememberUpdatedState(color)
-    var radius by rememberSaveable { mutableStateOf(0f) }
+    val hue by remember { derivedStateOf { updatedColor.hue } }
+    val saturation by remember { derivedStateOf { updatedColor.saturation } }
     val value by remember { derivedStateOf { updatedColor.hsvValue } }
+
+    ColorCircle(
+        hue = hue,
+        saturation = saturation,
+        value = value,
+        onColorChange = { h, s -> onColorChange(Color.hsv(h, s, value)) },
+        modifier = modifier,
+        interactionSource = interactionSource,
+        onColorChangeFinished = onColorChangeFinished,
+        thumb = thumb
+    )
+}
+
+/**
+ * Color circle that allows the user to select a hue by dragging a thumb around the circle.
+ * The color is represented in HSV color space with a fixed value.
+ *
+ * @param hue The hue of the color
+ * @param saturation The saturation of the color
+ * @param value The value of the color
+ * @param onColorChange Callback that is called when the color changes
+ * @param modifier The modifier to be applied to the color circle
+ * @param interactionSource The interaction source for the color circle
+ * @param onColorChangeFinished Callback that is called when the user finishes changing the color
+ * @param thumb Composable that is used to draw the thumb
+ *
+ * @see ColorRing
+ * @see ColorSquare
+ */
+@Composable
+public fun ColorCircle(
+    hue: Float,
+    saturation: Float,
+    value: Float = 1f,
+    onColorChange: (hue: Float, saturation: Float) -> Unit,
+    modifier: Modifier = Modifier,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    onColorChangeFinished: () -> Unit = {},
+    thumb: @Composable () -> Unit = {
+        ColorPickerDefaults.Thumb(Color.hsv(hue, saturation, value), interactionSource)
+    }
+) {
+    val scope = rememberCoroutineScope()
+    var radius by remember { mutableStateOf(0f) }
 
     val hueBrush = remember(value) {
         Brush.sweepGradient(
@@ -79,8 +121,9 @@ public fun ColorCircle(
             }
             .pointerInput(Unit) {
                 detectTapGestures { tapPosition ->
-                    val newColor = colorForPosition(tapPosition, radius, updatedColor.hsvValue)
-                    if (newColor.isSpecified) onColorChange(newColor)
+                    colorForPosition(tapPosition, radius)?.let { (h, s) ->
+                        onColorChange(h, s)
+                    }
                 }
             }
             .pointerInput(Unit) {
@@ -108,8 +151,9 @@ public fun ColorCircle(
                 ) { change, _ ->
                     change.consume()
                     val newPosition = clampPositionToRadius(change.position, radius)
-                    val newColor = colorForPosition(newPosition, radius, updatedColor.hsvValue)
-                    if (newColor.isSpecified) onColorChange(newColor)
+                    colorForPosition(newPosition, radius)?.let { (h, s) ->
+                        onColorChange(h, s)
+                    }
                 }
             }
             .drawWithCache {
@@ -119,9 +163,9 @@ public fun ColorCircle(
                 }
             }
     ) {
-        val position = remember(updatedColor, radius) {
-            val angle = updatedColor.hue * (PI / 180).toFloat()
-            val distance = updatedColor.saturation * radius
+        val position = remember(hue, saturation, radius) {
+            val angle = hue * (PI / 180).toFloat()
+            val distance = saturation * radius
 
             Offset(
                 x = radius + distance * cos(angle),
@@ -134,27 +178,23 @@ public fun ColorCircle(
                 IntOffset(position.x.roundToInt(), position.y.roundToInt())
             }
         ) {
-            thumb(updatedColor)
+            thumb()
         }
     }
 }
 
-private fun colorForPosition(position: Offset, radius: Float, value: Float): Color {
+private fun colorForPosition(position: Offset, radius: Float): Pair<Float, Float>? {
     val xOffset = position.x - radius
     val yOffset = position.y - radius
 
     val centerOffset = hypot(xOffset, yOffset)
 
-    if (centerOffset > radius) return Color.Unspecified
+    if (centerOffset > radius) return null
 
     val degrees = atan2(yOffset, xOffset) * (180 / PI).toFloat()
     val centerAngle = (degrees + 360) % 360
 
-    return Color.hsv(
-        hue = centerAngle,
-        saturation = centerOffset / radius,
-        value = value
-    )
+    return centerAngle to centerOffset / radius
 }
 
 private fun clampPositionToRadius(position: Offset, radius: Float): Offset {
