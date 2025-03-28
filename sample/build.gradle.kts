@@ -13,7 +13,7 @@ kotlin {
     androidTarget()
 
     wasmJs {
-        moduleName = "sample"
+        outputModuleName = "sample"
         browser {
             commonWebpackConfig {
                 outputFileName = "sample.js"
@@ -58,6 +58,15 @@ android {
     defaultConfig {
         minSdk = 21
         targetSdk = 35
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = true
+            isShrinkResources = true
+
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
+        }
     }
 }
 
