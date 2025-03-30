@@ -267,7 +267,7 @@ fun Sample() {
                             val h = (0..359).random().toFloat()
                             val s = (20..100).random().toFloat() / 100f
 
-                            hsvColor = HsvColor(h, s, 1f)
+                            hsvColor = HsvColor(h, s, hsvColor.value)
                         }
                     ) {
                         Icon(

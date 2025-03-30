@@ -14,7 +14,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import dev.zt64.compose.pipette.util.hsvValue
@@ -116,8 +116,8 @@ public fun CircularColorPicker(
     Box(
         modifier = modifier
             .size(128.dp)
-            .onGloballyPositioned {
-                radius = it.size.width.toFloat() / 2f
+            .onSizeChanged {
+                radius = it.width / 2f
             }
             .pointerInput(Unit) {
                 detectTapGestures { tapPosition ->
@@ -163,19 +163,15 @@ public fun CircularColorPicker(
                 }
             }
     ) {
-        val position = remember(hue, saturation, radius) {
-            val angle = hue * (PI / 180).toFloat()
-            val distance = saturation * radius
-
-            Offset(
-                x = radius + distance * cos(angle),
-                y = radius + distance * sin(angle)
-            )
-        }
-
         Box(
             modifier = Modifier.offset {
-                IntOffset(position.x.roundToInt(), position.y.roundToInt())
+                val angle = hue * (PI / 180).toFloat()
+                val distance = saturation * radius
+
+                IntOffset(
+                    x = (radius + distance * cos(angle)).roundToInt(),
+                    y = (radius + distance * sin(angle)).roundToInt()
+                )
             }
         ) {
             thumb()
