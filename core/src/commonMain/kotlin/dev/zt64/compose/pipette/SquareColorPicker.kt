@@ -120,15 +120,12 @@ public fun SquareColorPicker(
                 }
             }
     ) {
-        val offset = remember(saturation, value, size) {
-            val x = saturation * size.width
-            val y = size.height - value * size.height
-            Offset(x, y)
-        }
-
         Box(
             modifier = Modifier.offset {
-                IntOffset(offset.x.roundToInt(), offset.y.roundToInt())
+                IntOffset(
+                    x = (saturation * size.width).roundToInt(),
+                    y = (size.height - value * size.height).roundToInt()
+                )
             }
         ) {
             thumb()
