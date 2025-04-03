@@ -64,8 +64,6 @@ public fun RingColorPicker(
 
     RingColorPicker(
         hue = hue,
-        saturation = saturation,
-        value = value,
         onHueChange = { hue -> onColorChange(Color.hsv(hue, saturation, value)) },
         modifier = modifier,
         interactionSource = interactionSource,
