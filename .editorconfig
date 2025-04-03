@@ -13,6 +13,7 @@ ij_wrap_on_typing = false
 [*.{kt,kts}]
 ij_kotlin_allow_trailing_comma = false
 ij_kotlin_allow_trailing_comma_on_call_site = false
+ij_kotlin_line_break_after_multiline_when_entry = false
 ktlint_code_style = ktlint_official
 ktlint_experimental = enabled
 ktlint_standard_no-wildcard-imports = disabled
