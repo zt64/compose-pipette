@@ -1,5 +1,6 @@
 package dev.zt64.compose.pipette
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.DragInteraction
@@ -9,10 +10,9 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntOffset
@@ -37,6 +37,8 @@ import kotlin.math.roundToInt
  * @param modifier The modifier to be applied to the color picker
  * @param interactionSource The interaction source for the color picker
  * @param thumb Composable that is used to draw the thumb
+ * @param shape The shape of the color picker, note that the corner radius should be kept small,
+ * to prevent the thumb from visually appearing outside the color picker
  * @param onColorChangeFinished Callback that is called when the user finishes changing the color
  *
  * @see CircularColorPicker
@@ -53,6 +55,7 @@ public fun SquareColorPicker(
     thumb: @Composable () -> Unit = {
         ColorPickerDefaults.Thumb(Color.hsv(hue, saturation, value), interactionSource)
     },
+    shape: Shape = RectangleShape,
     onColorChangeFinished: () -> Unit = {}
 ) {
     val scope = rememberCoroutineScope()
@@ -70,56 +73,57 @@ public fun SquareColorPicker(
         )
     }
 
-    Box(
-        modifier = modifier
-            .size(128.dp)
-            .onSizeChanged { size = it }
-            .pointerInput(Unit) {
-                detectTapGestures(
-                    onTap = {
-                        hsvColorForPosition(it, size, hue).let { (h, s, v) -> onColorChange(h, s, v) }
-                        onColorChangeFinished()
-                    }
-                )
-            }
-            .pointerInput(Unit) {
-                var interaction: DragInteraction.Start? = null
-
-                detectDragGestures(
-                    onDragStart = {
-                        scope.launch {
-                            interaction = DragInteraction.Start()
-                            interactionSource.emit(interaction)
+    Box {
+        Canvas(
+            modifier = modifier
+                .size(128.dp)
+                .onSizeChanged { size = it }
+                .pointerInput(Unit) {
+                    detectTapGestures(
+                        onTap = {
+                            hsvColorForPosition(it, size, hue).let { (h, s, v) -> onColorChange(h, s, v) }
+                            onColorChangeFinished()
                         }
-                    },
-                    onDrag = { change, _ ->
-                        hsvColorForPosition(change.position, size, hue).let { (h, s, v) -> onColorChange(h, s, v) }
-                    },
-                    onDragEnd = {
-                        scope.launch {
-                            interaction?.let {
-                                interactionSource.emit(DragInteraction.Stop(it))
-                            }
-                        }
-                        onColorChangeFinished()
-                    },
-                    onDragCancel = {
-                        scope.launch {
-                            interaction?.let {
-                                interactionSource.emit(DragInteraction.Cancel(it))
-                            }
-                        }
-                    }
-                )
-            }
-            .drawWithCache {
-                onDrawBehind {
-                    drawRect(Color.White)
-                    drawRect(hueBrush)
-                    drawRect(saturationBrush)
+                    )
                 }
-            }
-    ) {
+                .pointerInput(Unit) {
+                    var interaction: DragInteraction.Start? = null
+
+                    detectDragGestures(
+                        onDragStart = {
+                            scope.launch {
+                                interaction = DragInteraction.Start()
+                                interactionSource.emit(interaction)
+                            }
+                        },
+                        onDrag = { change, _ ->
+                            hsvColorForPosition(change.position, size, hue).let { (h, s, v) -> onColorChange(h, s, v) }
+                        },
+                        onDragEnd = {
+                            scope.launch {
+                                interaction?.let {
+                                    interactionSource.emit(DragInteraction.Stop(it))
+                                }
+                            }
+                            onColorChangeFinished()
+                        },
+                        onDragCancel = {
+                            scope.launch {
+                                interaction?.let {
+                                    interactionSource.emit(DragInteraction.Cancel(it))
+                                }
+                            }
+                        }
+                    )
+                }
+                .clip(shape)
+                .graphicsLayer(compositingStrategy = CompositingStrategy.Offscreen)
+        ) {
+            drawRect(Color.White)
+            drawRect(hueBrush)
+            drawRect(saturationBrush)
+        }
+
         Box(
             modifier = Modifier.offset {
                 IntOffset(

@@ -3,6 +3,7 @@ package dev.zt64.compose.pipette.sample
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
@@ -192,7 +193,8 @@ fun Sample() {
                                 value = hsvColor.value,
                                 onColorChange = { _, s, v ->
                                     hsvColor = hsvColor.copy(second = s, third = v)
-                                }
+                                },
+                                shape = RoundedCornerShape(8.dp)
                             )
                         }
 
