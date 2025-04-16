@@ -7,13 +7,13 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import dev.zt64.compose.pipette.HsvColor
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalStdlibApi::class)
 @Composable
-fun HexField(color: Color, onColorChange: (Color) -> Unit) {
+fun HexField(color: HsvColor, onColorChange: (HsvColor) -> Unit) {
     val hex = remember(color) {
         "#" + listOf(color.red, color.green, color.blue).joinToString("") {
             (it * 255).roundToInt().toString(16).padStart(2, '0')
@@ -30,7 +30,7 @@ fun HexField(color: Color, onColorChange: (Color) -> Unit) {
                 } catch (_: Exception) {
                     return@FormatField false
                 }
-                onColorChange(Color(long))
+                onColorChange(HsvColor(long))
             }
 
             true
@@ -39,7 +39,7 @@ fun HexField(color: Color, onColorChange: (Color) -> Unit) {
 }
 
 @Composable
-fun RgbField(color: Color, onColorChange: (Color) -> Unit) {
+fun RgbField(color: HsvColor, onColorChange: (HsvColor) -> Unit) {
     val rgbString = remember(color) {
         listOf(color.red, color.green, color.blue).joinToString(", ") {
             (it * 255).roundToInt().toString()
@@ -50,11 +50,11 @@ fun RgbField(color: Color, onColorChange: (Color) -> Unit) {
         label = "RGB",
         value = rgbString,
         onValueChange = {
-            val values = it.split(",").map { it.trim().toIntOrNull() }
+            val values = it.split(",").map { it.trim().toFloatOrNull() }
 
             if (values.size == 3 && values.all { it != null }) {
                 val (red, green, blue) = values.map { it!! }
-                onColorChange(Color(red, green, blue))
+                onColorChange(HsvColor(red, green, blue))
 
                 true
             } else {
@@ -65,7 +65,7 @@ fun RgbField(color: Color, onColorChange: (Color) -> Unit) {
 }
 
 @Composable
-fun HsvField(hsvColor: HsvColor, onColorChange: (Color) -> Unit) {
+fun HsvField(hsvColor: HsvColor, onColorChange: (HsvColor) -> Unit) {
     val hsvString = remember(hsvColor) {
         "${hsvColor.hue.roundToInt()}°, ${(hsvColor.saturation * 100).roundToInt()}%, ${(hsvColor.value * 100).roundToInt()}%"
     }
@@ -78,7 +78,7 @@ fun HsvField(hsvColor: HsvColor, onColorChange: (Color) -> Unit) {
 
             if (values.size == 3 && values.all { it != null }) {
                 val (hue, saturation, value) = values.map { it!! }
-                onColorChange(Color.hsv(hue, saturation, value))
+                onColorChange(HsvColor(hue, saturation, value))
 
                 true
             } else {

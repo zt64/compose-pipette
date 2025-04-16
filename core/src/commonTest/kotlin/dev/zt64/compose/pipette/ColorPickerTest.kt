@@ -8,9 +8,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.*
-import dev.zt64.compose.pipette.util.hsvValue
-import dev.zt64.compose.pipette.util.hue
-import dev.zt64.compose.pipette.util.saturation
 import kotlin.math.round
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -21,17 +18,13 @@ private const val TEST_TAG = "squareColorPicker"
 class ColorPickerTest {
     @Test
     fun testSquarePicker() = runComposeUiTest {
-        var color by mutableStateOf(Color.Red)
+        var color by mutableStateOf(HsvColor(Color.Red))
 
         setContent {
             SquareColorPicker(
                 modifier = Modifier.testTag(TEST_TAG),
-                hue = color.hue,
-                saturation = color.saturation,
-                value = color.hsvValue,
-                onColorChange = { h, s, v ->
-                    color = Color.hsv(h, s, v)
-                }
+                color = color,
+                onColorChange = { color = it }
             )
         }
 

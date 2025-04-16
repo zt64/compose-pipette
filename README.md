@@ -28,7 +28,7 @@ the
 circle. The circle allows for control over the hue and saturation of the color.
 
 ```kotlin
-var color by remember { mutableStateOf(Color.Red) }
+var color by remember { mutableStateOf(HsvColor(Color.Red)) }
 
 CircularColorPicker(
     color = color,
@@ -42,28 +42,13 @@ The `SquareColorPicker` component is a square that allows the user to select a c
 square.
 The square allows for control over the saturation and value of the color.
 
-> [!NOTE]
-> Due to how Compose stores the color, it is not possible to use the `SquareColorPicker` component with the `Color`
-> class. At low saturation and value values, `Color` fails to represent the color correctly.
-> Instead, the hue, saturation and value components of the color need to be extracted and stored separately.
-
 ```kotlin
-var hue by rememberSaveable { mutableStateOf(0f) }
-var saturation by rememberSaveable { mutableStateOf(0f) }
-var value by rememberSaveable { mutableStateOf(0f) }
-var color = remember(hue, saturation, value) {
-    Color.hsv(hue, saturation, value)
-}
+var color by remember { mutableStateOf(HsvColor(Color.Red)) }
 
 SquareColorPicker(
-    hue = hue,
-    saturation = saturation,
-    value = value,
-    onColorChange = { h, s, v ->
-        hue = h
-        saturation = s
-        value = v
-    }
+    color = color,
+    onColorChange = { color = it },
+    shape = RoundedCornerShape(8.dp),
 )
 ```
 
@@ -74,7 +59,7 @@ Only the hue of the color can be changed with this component. For saturation con
 component.
 
 ```kotlin
-var color by remember { mutableStateOf(Color.Red) }
+var color by remember { mutableStateOf(HsvColor(Color.Red)) }
 
 RingColorPicker(
     color = color,

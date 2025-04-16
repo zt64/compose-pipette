@@ -27,12 +27,7 @@ import kotlin.math.roundToInt
  * The color is represented in HSV color space with a fixed hue. The saturation and value can be controlled by
  * dragging the thumb.
  *
- * **Note** that the color is represented in HSV color space with a fixed hue. Androidx Compose Color cannot represent
- * colors in HSV color space. Therefore, the color must be passed as separate parameters.
- *
- * @param hue The hue of the color
- * @param saturation The saturation of the color
- * @param value The value of the color
+ * @param color The current color
  * @param onColorChange Callback that is called when the color changes
  * @param modifier The modifier to be applied to the color picker
  * @param interactionSource The interaction source for the color picker
@@ -46,14 +41,12 @@ import kotlin.math.roundToInt
  */
 @Composable
 public fun SquareColorPicker(
-    hue: Float,
-    saturation: Float,
-    value: Float,
-    onColorChange: (hue: Float, saturation: Float, value: Float) -> Unit,
+    color: HsvColor,
+    onColorChange: (color: HsvColor) -> Unit,
     modifier: Modifier = Modifier,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     thumb: @Composable () -> Unit = {
-        ColorPickerDefaults.Thumb(Color.hsv(hue, saturation, value), interactionSource)
+        ColorPickerDefaults.Thumb(color.toColor(), interactionSource)
     },
     shape: Shape = RectangleShape,
     onColorChangeFinished: () -> Unit = {}
@@ -64,11 +57,11 @@ public fun SquareColorPicker(
         Brush.verticalGradient(listOf(Color.Transparent, Color.Black))
     }
 
-    val hueBrush = remember(hue) {
+    val hueBrush = remember(color.hue) {
         Brush.horizontalGradient(
             listOf(
                 Color.Transparent,
-                Color.hsv(hue, 1f, 1f)
+                Color.hsv(color.hue, 1f, 1f)
             )
         )
     }
@@ -81,7 +74,9 @@ public fun SquareColorPicker(
                 .pointerInput(Unit) {
                     detectTapGestures(
                         onTap = {
-                            hsvColorForPosition(it, size, hue).let { (h, s, v) -> onColorChange(h, s, v) }
+                            hsvColorForPosition(it, size).let { (s, v) ->
+                                onColorChange(color.copy(saturation = s, value = v))
+                            }
                             onColorChangeFinished()
                         }
                     )
@@ -97,7 +92,9 @@ public fun SquareColorPicker(
                             }
                         },
                         onDrag = { change, _ ->
-                            hsvColorForPosition(change.position, size, hue).let { (h, s, v) -> onColorChange(h, s, v) }
+                            hsvColorForPosition(change.position, size).let { (s, v) ->
+                                onColorChange(color.copy(saturation = s, value = v))
+                            }
                         },
                         onDragEnd = {
                             scope.launch {
@@ -127,8 +124,8 @@ public fun SquareColorPicker(
         Box(
             modifier = Modifier.offset {
                 IntOffset(
-                    x = (saturation * size.width).roundToInt(),
-                    y = (size.height - value * size.height).roundToInt()
+                    x = (color.saturation * size.width).roundToInt(),
+                    y = (size.height - color.value * size.height).roundToInt()
                 )
             }
         ) {
@@ -137,12 +134,12 @@ public fun SquareColorPicker(
     }
 }
 
-private fun hsvColorForPosition(position: Offset, size: IntSize, hue: Float): Triple<Float, Float, Float> {
+private fun hsvColorForPosition(position: Offset, size: IntSize): Pair<Float, Float> {
     val clampedX = position.x.coerceIn(0f, size.width.toFloat())
     val clampedY = position.y.coerceIn(0f, size.height.toFloat())
 
     val saturation = clampedX / size.width
     val value = 1f - (clampedY / size.height)
 
-    return Triple(hue, saturation, value)
+    return Pair(saturation, value)
 }

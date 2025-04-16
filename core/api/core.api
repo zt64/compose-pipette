@@ -1,6 +1,6 @@
 public final class dev/zt64/compose/pipette/CircularColorPickerKt {
 	public static final fun CircularColorPicker (FFFLkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
-	public static final fun CircularColorPicker-ZPw9REg (JLkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
+	public static final fun CircularColorPicker-Nq9uOik (JLkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class dev/zt64/compose/pipette/ColorPickerDefaults {
@@ -9,18 +9,46 @@ public final class dev/zt64/compose/pipette/ColorPickerDefaults {
 	public final fun Thumb-KTwxG1Y (JLandroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 }
 
+public final class dev/zt64/compose/pipette/HsvColor {
+	public static final field Companion Ldev/zt64/compose/pipette/HsvColor$Companion;
+	public static final synthetic fun box-impl (J)Ldev/zt64/compose/pipette/HsvColor;
+	public static final fun component1-impl (J)F
+	public static final fun component2-impl (J)F
+	public static final fun component3-impl (J)F
+	public static fun constructor-impl (FFF)J
+	public static fun constructor-impl (J)J
+	public static final fun copy-oM_iBcg (JFFF)J
+	public static synthetic fun copy-oM_iBcg$default (JFFFILjava/lang/Object;)J
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (JLjava/lang/Object;)Z
+	public static final fun equals-impl0 (JJ)Z
+	public static final fun getBlue-impl (J)F
+	public static final fun getGreen-impl (J)F
+	public static final fun getHue-impl (J)F
+	public final fun getPackedValue ()J
+	public static final fun getRed-impl (J)F
+	public static final fun getSaturation-impl (J)F
+	public static final fun getValue-impl (J)F
+	public fun hashCode ()I
+	public static fun hashCode-impl (J)I
+	public static final fun toColor-0d7_KjU (J)J
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (J)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()J
+}
+
+public final class dev/zt64/compose/pipette/HsvColor$Companion {
+	public final fun colorToHsvColor (J)J
+	public final fun getSaver ()Landroidx/compose/runtime/saveable/Saver;
+	public final fun longToHsvColor (J)J
+}
+
 public final class dev/zt64/compose/pipette/RingColorPickerKt {
+	public static final fun RingColorPicker-619AJ2E (JLkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/interaction/MutableInteractionSource;FLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
 	public static final fun RingColorPicker-V-95POc (FFFLkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/interaction/MutableInteractionSource;FLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
-	public static final fun RingColorPicker-Xl4WixY (JLkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/interaction/MutableInteractionSource;FLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class dev/zt64/compose/pipette/SquareColorPickerKt {
-	public static final fun SquareColorPicker (FFFLkotlin/jvm/functions/Function3;Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/graphics/Shape;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
-}
-
-public final class dev/zt64/compose/pipette/util/ColorKt {
-	public static final fun getHsvValue-8_81llA (J)F
-	public static final fun getHue-8_81llA (J)F
-	public static final fun getSaturation-8_81llA (J)F
+	public static final fun SquareColorPicker-hkRb470 (JLkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/graphics/Shape;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
 }
 

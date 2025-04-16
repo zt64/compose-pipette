@@ -21,9 +21,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import dev.zt64.compose.pipette.util.hsvValue
-import dev.zt64.compose.pipette.util.hue
-import dev.zt64.compose.pipette.util.saturation
 import kotlinx.coroutines.launch
 import kotlin.math.*
 
@@ -47,24 +44,19 @@ import kotlin.math.*
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun RingColorPicker(
-    color: Color,
-    onColorChange: (Color) -> Unit,
+    color: HsvColor,
+    onColorChange: (HsvColor) -> Unit,
     modifier: Modifier = Modifier,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     ringStrokeWidth: Dp = 16.dp,
     thumb: @Composable () -> Unit = {
-        ColorPickerDefaults.Thumb(color, interactionSource)
+        ColorPickerDefaults.Thumb(Color.hsv(color.hue, 1f, 1f), interactionSource)
     },
     onColorChangeFinished: () -> Unit = {}
 ) {
-    val updatedColor by rememberUpdatedState(color)
-    val hue by remember { derivedStateOf { updatedColor.hue } }
-    val saturation by remember { derivedStateOf { updatedColor.saturation } }
-    val value by remember { derivedStateOf { updatedColor.hsvValue } }
-
     RingColorPicker(
-        hue = hue,
-        onHueChange = { hue -> onColorChange(Color.hsv(hue, saturation, value)) },
+        hue = color.hue,
+        onHueChange = { hue -> onColorChange(color.copy(hue = hue)) },
         modifier = modifier,
         interactionSource = interactionSource,
         ringStrokeWidth = ringStrokeWidth,

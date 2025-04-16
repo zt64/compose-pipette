@@ -19,26 +19,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
-import dev.zt64.compose.pipette.CircularColorPicker
-import dev.zt64.compose.pipette.RingColorPicker
-import dev.zt64.compose.pipette.SquareColorPicker
-import dev.zt64.compose.pipette.util.hsvValue
-import dev.zt64.compose.pipette.util.hue
-import dev.zt64.compose.pipette.util.saturation
+import dev.zt64.compose.pipette.*
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun Sample() {
-    var hsvColor by rememberSaveable { mutableStateOf(HsvColor(180f, 1f, 1f)) }
-    val color by remember {
-        derivedStateOf { Color.hsv(hsvColor.hue, hsvColor.saturation, hsvColor.value) }
+    var hsvColor by rememberSaveable(stateSaver = HsvColor.Saver) {
+        mutableStateOf(HsvColor(180f, 1f, 1f))
     }
 
     var theme by rememberSaveable { mutableStateOf(Theme.SYSTEM) }
     var useDynamicTheme by rememberSaveable { mutableStateOf(false) }
 
     Theme(
-        color = { color },
+        color = { hsvColor },
         theme = theme,
         useDynamicTheme = useDynamicTheme
     ) {
@@ -69,7 +63,11 @@ fun Sample() {
                             onClick = { useDynamicTheme = !useDynamicTheme }
                         ) {
                             Icon(
-                                imageVector = if (useDynamicTheme) Icons.Default.SwitchLeft else Icons.Default.SwitchRight,
+                                imageVector = if (useDynamicTheme) {
+                                    Icons.Default.SwitchLeft
+                                } else {
+                                    Icons.Default.SwitchRight
+                                },
                                 contentDescription = null
                             )
                         }
@@ -131,24 +129,18 @@ fun Sample() {
                                 modifier = Modifier.fillMaxHeight()
                             ) {
                                 HexField(
-                                    color = color,
-                                    onColorChange = { newColor ->
-                                        hsvColor = HsvColor(newColor.hue, newColor.saturation, newColor.hsvValue)
-                                    }
+                                    color = hsvColor,
+                                    onColorChange = { hsvColor = it }
                                 )
 
                                 RgbField(
-                                    color = color,
-                                    onColorChange = { newColor ->
-                                        hsvColor = HsvColor(newColor.hue, newColor.saturation, newColor.hsvValue)
-                                    }
+                                    color = hsvColor,
+                                    onColorChange = { hsvColor = it }
                                 )
 
                                 HsvField(
                                     hsvColor = hsvColor,
-                                    onColorChange = { newColor ->
-                                        hsvColor = HsvColor(newColor.hue, newColor.saturation, newColor.hsvValue)
-                                    }
+                                    onColorChange = { hsvColor = it }
                                 )
                             }
 
@@ -158,7 +150,7 @@ fun Sample() {
                                 modifier = Modifier
                                     .width(100.dp)
                                     .fillMaxHeight()
-                                    .background(color, MaterialTheme.shapes.medium)
+                                    .background(hsvColor.toColor(), MaterialTheme.shapes.medium)
                             )
                         }
 
@@ -170,13 +162,8 @@ fun Sample() {
                             Spacer(Modifier.height(6.dp))
 
                             CircularColorPicker(
-                                color = color,
-                                onColorChange = { newColor ->
-                                    hsvColor = hsvColor.copy(
-                                        first = newColor.hue,
-                                        second = newColor.saturation
-                                    )
-                                }
+                                color = hsvColor,
+                                onColorChange = { hsvColor = it }
                             )
                         }
 
@@ -188,12 +175,8 @@ fun Sample() {
                             Spacer(Modifier.height(6.dp))
 
                             SquareColorPicker(
-                                hue = hsvColor.hue,
-                                saturation = hsvColor.saturation,
-                                value = hsvColor.value,
-                                onColorChange = { _, s, v ->
-                                    hsvColor = hsvColor.copy(second = s, third = v)
-                                },
+                                color = hsvColor,
+                                onColorChange = { hsvColor = it },
                                 shape = RoundedCornerShape(8.dp)
                             )
                         }
@@ -206,19 +189,15 @@ fun Sample() {
                             Spacer(Modifier.height(6.dp))
 
                             RingColorPicker(
-                                color = color,
-                                onColorChange = { newColor ->
-                                    hsvColor = hsvColor.copy(first = newColor.hue)
-                                }
+                                color = hsvColor,
+                                onColorChange = { hsvColor = it }
                             )
                         }
                     }
 
                     SampleSlider(
                         value = hsvColor.hue,
-                        onValueChange = {
-                            hsvColor = hsvColor.copy(first = it)
-                        },
+                        onValueChange = { hsvColor = hsvColor.copy(hue = it) },
                         valueRange = 0f..359f,
                         text = "Hue",
                         brush = Brush.horizontalGradient(
@@ -236,9 +215,7 @@ fun Sample() {
 
                     SampleSlider(
                         value = hsvColor.saturation,
-                        onValueChange = {
-                            hsvColor = hsvColor.copy(second = it)
-                        },
+                        onValueChange = { hsvColor = hsvColor.copy(saturation = it) },
                         valueRange = 0f..1f,
                         text = "Saturation",
                         brush = Brush.horizontalGradient(
@@ -251,9 +228,7 @@ fun Sample() {
 
                     SampleSlider(
                         value = hsvColor.value,
-                        onValueChange = {
-                            hsvColor = hsvColor.copy(third = it)
-                        },
+                        onValueChange = { hsvColor = hsvColor.copy(value = it) },
                         valueRange = 0f..1f,
                         text = "Value",
                         brush = Brush.horizontalGradient(
@@ -269,7 +244,7 @@ fun Sample() {
                             val h = (0..359).random().toFloat()
                             val s = (20..100).random().toFloat() / 100f
 
-                            hsvColor = HsvColor(h, s, hsvColor.value)
+                            hsvColor = hsvColor.copy(h, s)
                         }
                     ) {
                         Icon(

@@ -17,9 +17,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import dev.zt64.compose.pipette.util.hsvValue
-import dev.zt64.compose.pipette.util.hue
-import dev.zt64.compose.pipette.util.saturation
 import kotlinx.coroutines.launch
 import kotlin.math.*
 
@@ -39,25 +36,20 @@ import kotlin.math.*
  */
 @Composable
 public fun CircularColorPicker(
-    color: Color,
-    onColorChange: (Color) -> Unit,
+    color: HsvColor,
+    onColorChange: (HsvColor) -> Unit,
     modifier: Modifier = Modifier,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     onColorChangeFinished: () -> Unit = {},
     thumb: @Composable () -> Unit = {
-        ColorPickerDefaults.Thumb(color, interactionSource)
+        ColorPickerDefaults.Thumb(color.toColor(), interactionSource)
     }
 ) {
-    val updatedColor by rememberUpdatedState(color)
-    val hue by remember { derivedStateOf { updatedColor.hue } }
-    val saturation by remember { derivedStateOf { updatedColor.saturation } }
-    val value by remember { derivedStateOf { updatedColor.hsvValue } }
-
     CircularColorPicker(
-        hue = hue,
-        saturation = saturation,
-        value = value,
-        onColorChange = { h, s -> onColorChange(Color.hsv(h, s, value)) },
+        hue = color.hue,
+        saturation = color.saturation,
+        value = color.value,
+        onColorChange = { h, s -> onColorChange(color.copy(hue = h, saturation = s)) },
         modifier = modifier,
         interactionSource = interactionSource,
         onColorChangeFinished = onColorChangeFinished,
