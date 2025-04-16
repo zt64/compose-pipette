@@ -45,11 +45,13 @@ public fun CircularColorPicker(
         ColorPickerDefaults.Thumb(color.toColor(), interactionSource)
     }
 ) {
+    val updatedColor by rememberUpdatedState(color)
+
     CircularColorPicker(
-        hue = color.hue,
-        saturation = color.saturation,
-        value = color.value,
-        onColorChange = { h, s -> onColorChange(color.copy(hue = h, saturation = s)) },
+        hue = updatedColor.hue,
+        saturation = updatedColor.saturation,
+        value = updatedColor.value,
+        onColorChange = { h, s -> onColorChange(updatedColor.copy(hue = h, saturation = s)) },
         modifier = modifier,
         interactionSource = interactionSource,
         onColorChangeFinished = onColorChangeFinished,

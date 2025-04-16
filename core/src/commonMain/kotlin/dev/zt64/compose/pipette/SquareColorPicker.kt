@@ -53,15 +53,16 @@ public fun SquareColorPicker(
 ) {
     val scope = rememberCoroutineScope()
     var size by remember { mutableStateOf(IntSize.Zero) }
+    val updatedColor by rememberUpdatedState(color)
     val saturationBrush = remember {
         Brush.verticalGradient(listOf(Color.Transparent, Color.Black))
     }
 
-    val hueBrush = remember(color.hue) {
+    val hueBrush = remember(updatedColor.hue) {
         Brush.horizontalGradient(
             listOf(
                 Color.Transparent,
-                Color.hsv(color.hue, 1f, 1f)
+                Color.hsv(updatedColor.hue, 1f, 1f)
             )
         )
     }
@@ -124,8 +125,8 @@ public fun SquareColorPicker(
         Box(
             modifier = Modifier.offset {
                 IntOffset(
-                    x = (color.saturation * size.width).roundToInt(),
-                    y = (size.height - color.value * size.height).roundToInt()
+                    x = (updatedColor.saturation * size.width).roundToInt(),
+                    y = (size.height - updatedColor.value * size.height).roundToInt()
                 )
             }
         ) {
