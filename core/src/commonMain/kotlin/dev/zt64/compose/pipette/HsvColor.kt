@@ -39,14 +39,23 @@ public value class HsvColor private constructor(public val packedValue: ULong) {
     public val value: Float
         get() = (packedValue and 0xFFFFFu).toFloat() / 1000000f
 
+    /**
+     * The red component of the color (0-1).
+     */
     @Stable
     public val red: Float
         get() = hsvToRgbComponent(5, hue, saturation, value)
 
+    /**
+     * The green component of the color (0-1).
+     */
     @Stable
     public val green: Float
         get() = hsvToRgbComponent(3, hue, saturation, value)
 
+    /**
+     * The blue component of the color (0-1).
+     */
     @Stable
     public val blue: Float
         get() = hsvToRgbComponent(1, hue, saturation, value)
