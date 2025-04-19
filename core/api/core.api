@@ -25,7 +25,7 @@ public final class dev/zt64/compose/pipette/HsvColor {
 	public static final fun getBlue-impl (J)F
 	public static final fun getGreen-impl (J)F
 	public static final fun getHue-impl (J)F
-	public final fun getPackedValue ()J
+	public final fun getPackedValue-s-VKNKU ()J
 	public static final fun getRed-impl (J)F
 	public static final fun getSaturation-impl (J)F
 	public static final fun getValue-impl (J)F
@@ -38,9 +38,13 @@ public final class dev/zt64/compose/pipette/HsvColor {
 }
 
 public final class dev/zt64/compose/pipette/HsvColor$Companion {
-	public final fun colorToHsvColor (J)J
 	public final fun getSaver ()Landroidx/compose/runtime/saveable/Saver;
-	public final fun longToHsvColor (J)J
+}
+
+public final class dev/zt64/compose/pipette/HsvColorKt {
+	public static final fun HsvColor (I)J
+	public static final fun HsvColor (J)J
+	public static final fun HsvColor-8_81llA (J)J
 }
 
 public final class dev/zt64/compose/pipette/RingColorPickerKt {

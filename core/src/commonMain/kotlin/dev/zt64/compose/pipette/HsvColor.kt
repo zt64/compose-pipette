@@ -4,8 +4,9 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.colorspace.ColorSpaces
+import androidx.compose.ui.graphics.toArgb
 import kotlin.jvm.JvmInline
-import kotlin.jvm.JvmName
 import kotlin.math.max
 
 /**
@@ -16,27 +17,27 @@ import kotlin.math.max
  */
 @Immutable
 @JvmInline
-public value class HsvColor(public val packedValue: Long) {
+public value class HsvColor(public val packedValue: ULong) {
     /**
      * The hue of the color, in degrees (0-360).
      */
     @Stable
     public val hue: Float
-        get() = (packedValue shr 40 and 0xFFFF) / 100f
+        get() = (packedValue shr 40 and 0xFFFFu).toFloat() / 100f
 
     /**
      * The saturation of the color (0-1).
      */
     @Stable
     public val saturation: Float
-        get() = (packedValue shr 20 and 0xFFFFF) / 1000000f
+        get() = (packedValue shr 20 and 0xFFFFFu).toFloat() / 1000000f
 
     /**
      * The value (brightness) of the color (0-1).
      */
     @Stable
     public val value: Float
-        get() = (packedValue and 0xFFFFF) / 1000000f
+        get() = (packedValue and 0xFFFFFu).toFloat() / 1000000f
 
     @Stable
     public val red: Float
@@ -54,9 +55,9 @@ public value class HsvColor(public val packedValue: Long) {
      * Creates an HsvColor from the given hue, saturation, and value.
      */
     public constructor(hue: Float, saturation: Float, value: Float) : this(
-        ((hue * 100).toLong() and 0xFFFF shl 40) or
-            ((saturation * 1000000).toLong() and 0xFFFFF shl 20) or
-            ((value * 1000000).toLong() and 0xFFFFF)
+        ((hue * 100).toULong() and 0xFFFFu shl 40) or
+            ((saturation * 1000000).toULong() and 0xFFFFFu shl 20) or
+            ((value * 1000000).toULong() and 0xFFFFFu)
     )
 
     /**
@@ -101,37 +102,59 @@ public value class HsvColor(public val packedValue: Long) {
             restore = { HsvColor(it) }
         )
 
-        @JvmName("colorToHsvColor")
-        public operator fun invoke(color: Color): HsvColor {
-            val (r, g, b) = color
-            val max = maxOf(r, g, b)
-            val min = minOf(r, g, b)
-            val delta = max - min
-
-            val hue = when (max) {
-                r -> ((g - b) / delta) % 6
-                g -> ((b - r) / delta) + 2
-                b -> ((r - g) / delta) + 4
-                else -> 0f
-            }
-
-            return HsvColor(
-                hue = hue,
-                saturation = if (max == 0f) 0f else 1 - min / max,
-                value = max
-            )
-        }
-
-        @JvmName("longToHsvColor")
-        public operator fun invoke(color: Long): HsvColor = HsvColor(
-            hue = ((color shr 16) and 0xFF).toFloat(),
-            saturation = ((color shr 8) and 0xFF).toFloat(),
-            value = (color and 0xFF).toFloat()
-        )
-
         private fun hsvToRgbComponent(n: Int, h: Float, s: Float, v: Float): Float {
             val k = (n.toFloat() + h / 60f) % 6f
             return v - (v * s * max(0f, minOf(k, 4 - k, 1f)))
         }
     }
+}
+
+/**
+ * Creates a new [HsvColor] instance from a [Color].
+ *
+ * @param color The Color to create an HsvColor from.
+ * @return A non-null instance of [HsvColor]
+ */
+@Stable
+public fun HsvColor(color: Color): HsvColor = HsvColor(color.toArgb())
+
+/**
+ * Creates a new [Color] instance from an ARGB color int.
+ *
+ * @param color The ARGB color int to create a Color from.
+ * @return A non-null instance of [HsvColor]
+ */
+@Stable
+public fun HsvColor(color: Int): HsvColor = HsvColor(color.toLong())
+
+/**
+ * Creates a new [Color] instance from an ARGB color long.
+ * The resulting color is in the [sRGB][ColorSpaces.Srgb]
+ * color space.
+ *
+ * @param color The ARGB color long to create a Color from.
+ * @return A non-null instance of [HsvColor]
+ */
+@Stable
+public fun HsvColor(color: Long): HsvColor {
+    val r = ((color shr 16) and 0xFF).toFloat() / 255f
+    val g = ((color shr 8) and 0xFF).toFloat() / 255f
+    val b = (color and 0xFF).toFloat() / 255f
+
+    val max = maxOf(r, g, b)
+    val min = minOf(r, g, b)
+    val delta = max - min
+
+    val hue = when {
+        delta == 0f -> 0f
+        max == r -> ((g - b) / delta) % 6
+        max == g -> ((b - r) / delta) + 2
+        max == b -> ((r - g) / delta) + 4
+        else -> 0f
+    } * 60f
+
+    val saturation = if (max == 0f) 0f else 1 - min / max
+    val value = max
+
+    return HsvColor(hue, saturation, value)
 }
