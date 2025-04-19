@@ -16,7 +16,6 @@ public final class dev/zt64/compose/pipette/HsvColor {
 	public static final fun component2-impl (J)F
 	public static final fun component3-impl (J)F
 	public static fun constructor-impl (FFF)J
-	public static fun constructor-impl (J)J
 	public static final fun copy-oM_iBcg (JFFF)J
 	public static synthetic fun copy-oM_iBcg$default (JFFFILjava/lang/Object;)J
 	public fun equals (Ljava/lang/Object;)Z
