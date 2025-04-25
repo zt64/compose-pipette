@@ -13,5 +13,5 @@ plugins {
 
 allprojects {
     group = "dev.zt64.compose.pipette"
-    version = "1.0.0-beta05"
+    version = "1.0.0"
 }
