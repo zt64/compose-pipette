@@ -1,6 +1,6 @@
 [versions]
 kotlin = "2.1.20"
-compose-jb = "1.7.3"
+compose-jb = "1.8.0"
 android = "8.10.0"
 
 # Sample dependency versions
