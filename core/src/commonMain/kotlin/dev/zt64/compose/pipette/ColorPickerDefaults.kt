@@ -36,7 +36,7 @@ public object ColorPickerDefaults {
 
             // Draw the border
             drawCircle(
-                color = Color.Black,
+                color = color.contrastingColor(),
                 radius = radius.toPx(),
                 alpha = 0.5f,
                 style = Stroke(1.dp.toPx())
@@ -44,3 +44,9 @@ public object ColorPickerDefaults {
         }
     }
 }
+
+internal fun Color.contrastingColor(): Color =
+    if (this.isDark()) Color.White else Color.Black
+
+internal fun Color.isDark(): Boolean =
+    0.2126 * this.red + 0.7152 * this.green + 0.0722 * this.blue < .5f
