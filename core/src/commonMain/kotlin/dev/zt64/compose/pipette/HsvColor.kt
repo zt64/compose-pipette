@@ -108,7 +108,7 @@ public value class HsvColor private constructor(public val packedValue: ULong) {
     public companion object {
         public val Saver: Saver<HsvColor, Long> = Saver(
             save = { it.packedValue.toLong() },
-            restore = { HsvColor(it) }
+            restore = { HsvColor(it.toULong()) }
         )
 
         private fun hsvToRgbComponent(n: Int, h: Float, s: Float, v: Float): Float {
