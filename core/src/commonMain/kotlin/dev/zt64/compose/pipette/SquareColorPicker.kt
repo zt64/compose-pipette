@@ -76,7 +76,7 @@ public fun SquareColorPicker(
                     detectTapGestures(
                         onTap = {
                             hsvColorForPosition(it, size).let { (s, v) ->
-                                onColorChange(color.copy(saturation = s, value = v))
+                                onColorChange(updatedColor.copy(saturation = s, value = v))
                             }
                             onColorChangeFinished()
                         }
@@ -94,7 +94,7 @@ public fun SquareColorPicker(
                         },
                         onDrag = { change, _ ->
                             hsvColorForPosition(change.position, size).let { (s, v) ->
-                                onColorChange(color.copy(saturation = s, value = v))
+                                onColorChange(updatedColor.copy(saturation = s, value = v))
                             }
                         },
                         onDragEnd = {
