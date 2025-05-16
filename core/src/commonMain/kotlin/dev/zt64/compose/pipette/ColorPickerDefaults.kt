@@ -51,4 +51,3 @@ internal val Color.contrastingColor: Color
 internal fun Color.isDark(): Boolean {
     return 0.2126 * this.red + 0.7152 * this.green + 0.0722 * this.blue < .5f
 }
-
