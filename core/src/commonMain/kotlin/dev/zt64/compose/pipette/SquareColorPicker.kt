@@ -44,6 +44,7 @@ public fun SquareColorPicker(
     color: HsvColor,
     onColorChange: (color: HsvColor) -> Unit,
     modifier: Modifier = Modifier,
+    outerModifier: Modifier = Modifier,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     thumb: @Composable () -> Unit = {
         ColorPickerDefaults.Thumb(color.toColor(), interactionSource)
@@ -67,7 +68,7 @@ public fun SquareColorPicker(
         )
     }
 
-    Box {
+    Box(modifier = outerModifier) {
         Canvas(
             modifier = modifier
                 .size(128.dp)
