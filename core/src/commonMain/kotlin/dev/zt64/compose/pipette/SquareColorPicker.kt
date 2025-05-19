@@ -7,6 +7,7 @@ import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -15,6 +16,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -35,6 +38,7 @@ import kotlin.math.roundToInt
  * @param shape The shape of the color picker, note that the corner radius should be kept small,
  * to prevent the thumb from visually appearing outside the color picker
  * @param onColorChangeFinished Callback that is called when the user finishes changing the color
+ * @param interactiveMargin Margin outside of the color picker which accepts input. Will be subtracted from size
  *
  * @see CircularColorPicker
  * @see RingColorPicker
@@ -50,11 +54,14 @@ public fun SquareColorPicker(
         ColorPickerDefaults.Thumb(color.toColor(), interactionSource)
     },
     shape: Shape = RectangleShape,
-    onColorChangeFinished: () -> Unit = {}
+    onColorChangeFinished: () -> Unit = {},
+    interactiveMargin: Dp = 0.dp,
 ) {
     val scope = rememberCoroutineScope()
     var size by remember { mutableStateOf(IntSize.Zero) }
     val updatedColor by rememberUpdatedState(color)
+    val marginPx = with(LocalDensity.current) { interactiveMargin.toPx() }
+
     val saturationBrush = remember {
         Brush.verticalGradient(listOf(Color.Transparent, Color.Black))
     }
@@ -72,11 +79,10 @@ public fun SquareColorPicker(
         Canvas(
             modifier = modifier
                 .size(128.dp)
-                .onSizeChanged { size = it }
                 .pointerInput(Unit) {
                     detectTapGestures(
                         onTap = {
-                            hsvColorForPosition(it, size).let { (s, v) ->
+                            hsvColorForPosition(it, marginPx, size).let { (s, v) ->
                                 onColorChange(updatedColor.copy(saturation = s, value = v))
                             }
                             onColorChangeFinished()
@@ -94,7 +100,7 @@ public fun SquareColorPicker(
                             }
                         },
                         onDrag = { change, _ ->
-                            hsvColorForPosition(change.position, size).let { (s, v) ->
+                            hsvColorForPosition(change.position, marginPx, size).let { (s, v) ->
                                 onColorChange(updatedColor.copy(saturation = s, value = v))
                             }
                         },
@@ -115,6 +121,8 @@ public fun SquareColorPicker(
                         }
                     )
                 }
+                .padding(interactiveMargin)
+                .onSizeChanged { size = it }
                 .clip(shape)
                 .graphicsLayer(compositingStrategy = CompositingStrategy.Offscreen)
         ) {
@@ -126,8 +134,8 @@ public fun SquareColorPicker(
         Box(
             modifier = Modifier.offset {
                 IntOffset(
-                    x = (updatedColor.saturation * size.width).roundToInt(),
-                    y = (size.height - updatedColor.value * size.height).roundToInt()
+                    x = (marginPx + updatedColor.saturation * size.width).roundToInt(),
+                    y = (marginPx + size.height - updatedColor.value * size.height).roundToInt(),
                 )
             }
         ) {
@@ -136,9 +144,9 @@ public fun SquareColorPicker(
     }
 }
 
-private fun hsvColorForPosition(position: Offset, size: IntSize): Pair<Float, Float> {
-    val clampedX = position.x.coerceIn(0f, size.width.toFloat())
-    val clampedY = position.y.coerceIn(0f, size.height.toFloat())
+private fun hsvColorForPosition(position: Offset, marginPx: Float, size: IntSize): Pair<Float, Float> {
+    val clampedX = (position.x - marginPx).coerceIn(0f, size.width.toFloat())
+    val clampedY = (position.y - marginPx).coerceIn(0f, size.height.toFloat())
 
     val saturation = clampedX / size.width
     val value = 1f - (clampedY / size.height)
