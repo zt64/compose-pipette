@@ -38,6 +38,7 @@ import kotlin.math.roundToInt
  * @param shape The shape of the color picker, note that the corner radius should be kept small,
  * to prevent the thumb from visually appearing outside the color picker
  * @param onColorChangeFinished Callback that is called when the user finishes changing the color
+ * @param outerModifier The modifier to be applied to the outer Box around the color picker
  * @param interactiveMargin Margin outside of the color picker which accepts input. Will be subtracted from size
  *
  * @see CircularColorPicker
@@ -48,13 +49,13 @@ public fun SquareColorPicker(
     color: HsvColor,
     onColorChange: (color: HsvColor) -> Unit,
     modifier: Modifier = Modifier,
-    outerModifier: Modifier = Modifier,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     thumb: @Composable () -> Unit = {
         ColorPickerDefaults.Thumb(color.toColor(), interactionSource)
     },
     shape: Shape = RectangleShape,
     onColorChangeFinished: () -> Unit = {},
+    outerModifier: Modifier = Modifier,
     interactiveMargin: Dp = 0.dp,
 ) {
     val scope = rememberCoroutineScope()
