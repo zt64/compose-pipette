@@ -1,3 +1,5 @@
+@file:Suppress("NOTHING_TO_INLINE")
+
 package dev.zt64.compose.pipette
 
 import androidx.compose.runtime.Immutable
@@ -75,17 +77,14 @@ public value class HsvColor private constructor(public val packedValue: ULong) {
      * **Note**: HSV to RGB conversion is a lossy process, so the resulting color may not be exactly the same as the original HSV color.
      * When red, green and blue are equal, hue will be 0 and saturation will be 0.
      */
-    public fun toColor(): Color = Color.hsv(hue, saturation, value)
+    public inline fun toColor(): Color = Color.hsv(hue, saturation, value)
 
-    @Suppress("NOTHING_TO_INLINE")
     @Stable
     public inline operator fun component1(): Float = hue
 
-    @Suppress("NOTHING_TO_INLINE")
     @Stable
     public inline operator fun component2(): Float = saturation
 
-    @Suppress("NOTHING_TO_INLINE")
     @Stable
     public inline operator fun component3(): Float = value
 
@@ -93,7 +92,11 @@ public value class HsvColor private constructor(public val packedValue: ULong) {
      * Copies the existing color, changing only the provided values.
      */
     @Stable
-    public fun copy(hue: Float = this.hue, saturation: Float = this.saturation, value: Float = this.value): HsvColor {
+    public inline fun copy(
+        hue: Float = this.hue,
+        saturation: Float = this.saturation,
+        value: Float = this.value
+    ): HsvColor {
         return HsvColor(hue, saturation, value)
     }
 
@@ -125,7 +128,7 @@ public value class HsvColor private constructor(public val packedValue: ULong) {
  * @return A non-null instance of [HsvColor]
  */
 @Stable
-public fun HsvColor(color: Color): HsvColor = HsvColor(color.toArgb())
+public inline fun HsvColor(color: Color): HsvColor = HsvColor(color.toArgb())
 
 /**
  * Creates a new [Color] instance from an ARGB color int.
@@ -134,7 +137,7 @@ public fun HsvColor(color: Color): HsvColor = HsvColor(color.toArgb())
  * @return A non-null instance of [HsvColor]
  */
 @Stable
-public fun HsvColor(color: Int): HsvColor = HsvColor(color.toLong())
+public inline fun HsvColor(color: Int): HsvColor = HsvColor(color.toLong())
 
 /**
  * Creates a new [Color] instance from an ARGB color long.
