@@ -16,7 +16,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import kotlin.math.*
 
@@ -109,7 +108,7 @@ public fun CircularColorPicker(
 
     Box(
         modifier = modifier
-            .size(128.dp)
+            .size(ColorPickerDefaults.ComponentSize)
             .onSizeChanged {
                 radius = it.width / 2f
             }

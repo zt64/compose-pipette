@@ -129,7 +129,7 @@ public fun RingColorPicker(
 
     Box(
         modifier = modifier
-            .size(128.dp)
+            .size(ColorPickerDefaults.ComponentSize)
             .onSizeChanged {
                 radius = (it.width - strokeWidth) / 2f
                 center = Offset(it.width / 2f, it.height / 2f)
