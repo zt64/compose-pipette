@@ -18,12 +18,6 @@ internal val ThumbRadius = 10.dp
 
 public object ColorPickerDefaults {
     /**
-     * The default size applied to color pickers. Note that you can override it by applying
-     * Modifier.size directly on a picker component.
-     */
-    public val ComponentSize: Dp = 128.dp
-
-    /**
      * Default implementation of the thumb component for the color pickers.
      *
      * @param color The color of the thumb

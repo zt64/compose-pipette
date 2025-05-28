@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import kotlin.math.*
 
@@ -37,7 +38,7 @@ import kotlin.math.*
 public fun CircularColorPicker(
     color: HsvColor,
     onColorChange: (HsvColor) -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier.size(128.dp),
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     onColorChangeFinished: () -> Unit = {},
     thumb: @Composable () -> Unit = {
@@ -80,7 +81,7 @@ public fun CircularColorPicker(
     saturation: Float,
     value: Float = 1f,
     onColorChange: (hue: Float, saturation: Float) -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier.size(128.dp),
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     onColorChangeFinished: () -> Unit = {},
     thumb: @Composable () -> Unit = {
@@ -108,7 +109,6 @@ public fun CircularColorPicker(
 
     Box(
         modifier = modifier
-            .size(ColorPickerDefaults.ComponentSize)
             .onSizeChanged {
                 radius = it.width / 2f
             }

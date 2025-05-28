@@ -17,6 +17,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -42,7 +43,7 @@ import kotlin.math.roundToInt
 public fun SquareColorPicker(
     color: HsvColor,
     onColorChange: (color: HsvColor) -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier.size(128.dp),
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     thumb: @Composable () -> Unit = {
         ColorPickerDefaults.Thumb(color.toColor(), interactionSource)
@@ -69,7 +70,6 @@ public fun SquareColorPicker(
     Box {
         Canvas(
             modifier = modifier
-                .size(ColorPickerDefaults.ComponentSize)
                 .onSizeChanged { size = it }
                 .pointerInput(Unit) {
                     detectTapGestures(

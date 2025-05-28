@@ -46,7 +46,7 @@ import kotlin.math.*
 public fun RingColorPicker(
     color: HsvColor,
     onColorChange: (HsvColor) -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier.size(128.dp),
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     ringStrokeWidth: Dp = 16.dp,
     thumb: @Composable () -> Unit = {
@@ -92,7 +92,7 @@ public fun RingColorPicker(
     saturation: Float = 1f,
     value: Float = 1f,
     onHueChange: (Float) -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier.size(128.dp),
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     ringStrokeWidth: Dp = 16.dp,
     thumb: @Composable () -> Unit = {
@@ -129,7 +129,6 @@ public fun RingColorPicker(
 
     Box(
         modifier = modifier
-            .size(ColorPickerDefaults.ComponentSize)
             .onSizeChanged {
                 radius = (it.width - strokeWidth) / 2f
                 center = Offset(it.width / 2f, it.height / 2f)
