@@ -6,6 +6,7 @@ import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -15,6 +16,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import kotlinx.coroutines.launch
 import kotlin.math.*
@@ -29,6 +32,7 @@ import kotlin.math.*
  * @param interactionSource The interaction source for the color picker
  * @param onColorChangeFinished Callback that is called when the user finishes changing the color
  * @param thumb Composable that is used to draw the thumb
+ * @param interactivePadding Padding on the outside of the color picker, which also accepts input
  *
  * @see RingColorPicker
  * @see SquareColorPicker
@@ -42,7 +46,8 @@ public fun CircularColorPicker(
     onColorChangeFinished: () -> Unit = {},
     thumb: @Composable () -> Unit = {
         ColorPickerDefaults.Thumb(color.toColor(), interactionSource)
-    }
+    },
+    interactivePadding: Dp = ThumbRadius,
 ) {
     val updatedColor by rememberUpdatedState(color)
 
@@ -54,7 +59,8 @@ public fun CircularColorPicker(
         modifier = modifier,
         interactionSource = interactionSource,
         onColorChangeFinished = onColorChangeFinished,
-        thumb = thumb
+        thumb = thumb,
+        interactivePadding = interactivePadding,
     )
 }
 
@@ -70,6 +76,7 @@ public fun CircularColorPicker(
  * @param interactionSource The interaction source for the color picker
  * @param onColorChangeFinished Callback that is called when the user finishes changing the color
  * @param thumb Composable that is used to draw the thumb
+ * @param interactivePadding Padding on the outside of the color picker, which also accepts input
  *
  * @see RingColorPicker
  * @see SquareColorPicker
@@ -85,10 +92,12 @@ public fun CircularColorPicker(
     onColorChangeFinished: () -> Unit = {},
     thumb: @Composable () -> Unit = {
         ColorPickerDefaults.Thumb(Color.hsv(hue, saturation, value), interactionSource)
-    }
+    },
+    interactivePadding: Dp = ThumbRadius,
 ) {
     val scope = rememberCoroutineScope()
     var radius by remember { mutableStateOf(0f) }
+    val paddingPx = with(LocalDensity.current) { interactivePadding.toPx() }
 
     val hueBrush = remember(value) {
         Brush.sweepGradient(
@@ -109,12 +118,9 @@ public fun CircularColorPicker(
     Box(
         modifier = modifier
             .size(ColorPickerDefaults.ComponentSize)
-            .onSizeChanged {
-                radius = it.width / 2f
-            }
             .pointerInput(Unit) {
                 detectTapGestures { tapPosition ->
-                    colorForPosition(tapPosition, radius)?.let { (h, s) ->
+                    colorForPosition(tapPosition, radius, paddingPx, false)?.let { (h, s) ->
                         onColorChange(h, s)
                     }
                 }
@@ -143,11 +149,14 @@ public fun CircularColorPicker(
                     }
                 ) { change, _ ->
                     change.consume()
-                    val newPosition = clampPositionToRadius(change.position, radius)
-                    colorForPosition(newPosition, radius)?.let { (h, s) ->
+                    colorForPosition(change.position, radius, paddingPx, true)?.let { (h, s) ->
                         onColorChange(h, s)
                     }
                 }
+            }
+            .padding(interactivePadding)
+            .onSizeChanged {
+                radius = it.width / 2f
             }
             .drawWithCache {
                 onDrawBehind {
@@ -172,32 +181,21 @@ public fun CircularColorPicker(
     }
 }
 
-private fun colorForPosition(position: Offset, radius: Float): Pair<Float, Float>? {
-    val xOffset = position.x - radius
-    val yOffset = position.y - radius
+private fun colorForPosition(
+    position: Offset,
+    radius: Float,
+    paddingPx: Float,
+    allowOutOfBounds: Boolean,
+): Pair<Float, Float>? {
+    val xOffset = position.x - radius - paddingPx
+    val yOffset = position.y - radius - paddingPx
 
     val centerOffset = hypot(xOffset, yOffset)
 
-    if (centerOffset > radius) return null
+    if (!allowOutOfBounds && centerOffset > radius + paddingPx) return null
 
     val degrees = atan2(yOffset, xOffset) * (180 / PI).toFloat()
     val centerAngle = (degrees + 360) % 360
 
-    return centerAngle to centerOffset / radius
-}
-
-private fun clampPositionToRadius(position: Offset, radius: Float): Offset {
-    val xOffset = position.x - radius
-    val yOffset = position.y - radius
-
-    val centerOffset = hypot(xOffset, yOffset)
-
-    // If the position is outside the circle, adjust it to be on the edge in the same direction
-    return if (centerOffset > radius) {
-        val scale = radius / centerOffset
-        Offset((xOffset * scale) + radius, (yOffset * scale) + radius)
-    } else {
-        // Otherwise, the position is inside the circle so return it as is
-        position
-    }
+    return centerAngle to (centerOffset / radius).coerceAtMost(1f)
 }
