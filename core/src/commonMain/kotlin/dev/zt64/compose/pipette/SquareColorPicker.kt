@@ -79,7 +79,7 @@ public fun SquareColorPicker(
     Box(modifier = outerModifier) {
         Canvas(
             modifier = modifier
-                .size(128.dp)
+                .size(ColorPickerDefaults.ComponentSize)
                 .pointerInput(Unit) {
                     detectTapGestures(
                         onTap = {

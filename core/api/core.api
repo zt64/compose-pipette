@@ -7,6 +7,7 @@ public final class dev/zt64/compose/pipette/ColorPickerDefaults {
 	public static final field $stable I
 	public static final field INSTANCE Ldev/zt64/compose/pipette/ColorPickerDefaults;
 	public final fun Thumb-KTwxG1Y (JLandroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+	public final fun getComponentSize-D9Ej5fM ()F
 }
 
 public final class dev/zt64/compose/pipette/HsvColor {

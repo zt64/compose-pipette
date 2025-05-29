@@ -12,7 +12,7 @@ import kotlin.math.round
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-private const val TEST_TAG = "squareColorPicker"
+private const val TEST_TAG = "colorPicker"
 
 @OptIn(ExperimentalTestApi::class)
 class ColorPickerTest {
@@ -34,5 +34,60 @@ class ColorPickerTest {
 
         // saturation should be half. multiply by ten to round two decimal places
         assertEquals(5f, round(color.saturation * 10))
+    }
+
+    @Test
+    fun testCirclePicker() = runComposeUiTest {
+        var color by mutableStateOf(HsvColor(Color.Red))
+
+        setContent {
+            CircularColorPicker(
+                modifier = Modifier.testTag(TEST_TAG),
+                color = color,
+                onColorChange = { color = it }
+            )
+        }
+
+        val node = onNodeWithTag(TEST_TAG)
+
+        node.performTouchInput {
+            // click at the top of the circle
+            click(Offset(width / 2f, 0f))
+        }
+
+        assertEquals(270f, round(color.hue))
+        assertEquals(1f, color.saturation)
+        assertEquals(1f, color.value)
+
+        node.performTouchInput {
+            // click at the center of the circle
+            click(Offset(width / 2f, height / 2f))
+        }
+
+        assertEquals(0f, color.hue)
+        assertEquals(0f, color.saturation)
+        assertEquals(1f, color.value)
+    }
+
+    @Test
+    fun testRingPicker() = runComposeUiTest {
+        var color by mutableStateOf(HsvColor(Color.Red))
+
+        setContent {
+            RingColorPicker(
+                modifier = Modifier.testTag(TEST_TAG),
+                color = color,
+                onColorChange = { color = it }
+            )
+        }
+
+        onNodeWithTag(TEST_TAG).performTouchInput {
+            // click at the top of the ring
+            click(Offset(width / 2f, 0f))
+        }
+
+        assertEquals(270f, round(color.hue))
+        assertEquals(1f, color.saturation)
+        assertEquals(1f, color.value)
     }
 }
