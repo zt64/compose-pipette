@@ -56,7 +56,7 @@ public fun SquareColorPicker(
     shape: Shape = RectangleShape,
     onColorChangeFinished: () -> Unit = {},
     outerModifier: Modifier = Modifier,
-    interactivePadding: Dp = 0.dp,
+    interactivePadding: Dp = ThumbRadius,
 ) {
     val scope = rememberCoroutineScope()
     var size by remember { mutableStateOf(IntSize.Zero) }
