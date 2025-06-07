@@ -90,6 +90,10 @@ public fun CircularColorPicker(
     val scope = rememberCoroutineScope()
     var radius by remember { mutableStateOf(0f) }
 
+    val onColorChange by rememberUpdatedState(onColorChange)
+    val onColorChangeFinished by rememberUpdatedState(onColorChangeFinished)
+    val updatedRadius by rememberUpdatedState(radius)
+
     val hueBrush = remember(value) {
         Brush.sweepGradient(
             colors = List(7) { i ->
@@ -114,7 +118,7 @@ public fun CircularColorPicker(
             }
             .pointerInput(Unit) {
                 detectTapGestures { tapPosition ->
-                    colorForPosition(tapPosition, radius)?.let { (h, s) ->
+                    colorForPosition(tapPosition, updatedRadius)?.let { (h, s) ->
                         onColorChange(h, s)
                     }
                 }
@@ -143,8 +147,8 @@ public fun CircularColorPicker(
                     }
                 ) { change, _ ->
                     change.consume()
-                    val newPosition = clampPositionToRadius(change.position, radius)
-                    colorForPosition(newPosition, radius)?.let { (h, s) ->
+                    val newPosition = clampPositionToRadius(change.position, updatedRadius)
+                    colorForPosition(newPosition, updatedRadius)?.let { (h, s) ->
                         onColorChange(h, s)
                     }
                 }

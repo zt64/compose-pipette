@@ -105,6 +105,10 @@ public fun RingColorPicker(
     var center by remember { mutableStateOf(Offset.Zero) }
     val strokeWidth = with(LocalDensity.current) { ringStrokeWidth.toPx() }
 
+    val onHueChange by rememberUpdatedState(onHueChange)
+    val onColorChangeFinished by rememberUpdatedState(onColorChangeFinished)
+    val updatedCenter by rememberUpdatedState(center)
+
     val brush = remember(saturation, value) {
         Brush.sweepGradient(
             List(7) {
@@ -117,16 +121,6 @@ public fun RingColorPicker(
         )
     }
 
-    fun updateHandlePosition(position: Offset) {
-        val (dx, dy) = position - center
-        val theta = atan2(dy, dx)
-        var angle = theta * (180.0 / PI).toFloat()
-
-        if (angle < 0) angle += 360f
-
-        onHueChange(angle)
-    }
-
     Box(
         modifier = modifier
             .size(ColorPickerDefaults.ComponentSize)
@@ -136,7 +130,7 @@ public fun RingColorPicker(
             }
             .pointerInput(Unit) {
                 detectTapGestures { offset ->
-                    updateHandlePosition(offset)
+                    onHueChange(colorForPosition(offset, updatedCenter))
                     onColorChangeFinished()
                 }
             }
@@ -164,7 +158,7 @@ public fun RingColorPicker(
                     }
                 ) { change, _ ->
                     change.consume()
-                    updateHandlePosition(change.position)
+                    onHueChange(colorForPosition(change.position, updatedCenter))
                 }
             }
             .drawWithCache {
@@ -189,4 +183,14 @@ public fun RingColorPicker(
             thumb()
         }
     }
+}
+
+private fun colorForPosition(position: Offset, center: Offset): Float {
+    val (dx, dy) = position - center
+    val theta = atan2(dy, dx)
+    var angle = theta * (180.0 / PI).toFloat()
+
+    if (angle < 0) angle += 360f
+
+    return angle
 }
