@@ -105,9 +105,9 @@ public fun RingColorPicker(
     var center by remember { mutableStateOf(Offset.Zero) }
     val strokeWidth = with(LocalDensity.current) { ringStrokeWidth.toPx() }
 
-    val onHueChange by rememberUpdatedState(onHueChange)
-    val onColorChangeFinished by rememberUpdatedState(onColorChangeFinished)
-    val updatedCenter by rememberUpdatedState(center)
+    val currentOnHueChange by rememberUpdatedState(onHueChange)
+    val currentOnColorChangeFinished by rememberUpdatedState(onColorChangeFinished)
+    val currentCenter by rememberUpdatedState(center)
 
     val brush = remember(saturation, value) {
         Brush.sweepGradient(
@@ -130,8 +130,8 @@ public fun RingColorPicker(
             }
             .pointerInput(Unit) {
                 detectTapGestures { offset ->
-                    onHueChange(colorForPosition(offset, updatedCenter))
-                    onColorChangeFinished()
+                    currentOnHueChange(colorForPosition(offset, currentCenter))
+                    currentOnColorChangeFinished()
                 }
             }
             .pointerInput(Unit) {
@@ -148,17 +148,17 @@ public fun RingColorPicker(
                         scope.launch {
                             interaction?.let { interactionSource.emit(DragInteraction.Stop(it)) }
                         }
-                        onColorChangeFinished()
+                        currentOnColorChangeFinished()
                     },
                     onDragCancel = {
                         scope.launch {
                             interaction?.let { interactionSource.emit(DragInteraction.Cancel(it)) }
                         }
-                        onColorChangeFinished()
+                        currentOnColorChangeFinished()
                     }
                 ) { change, _ ->
                     change.consume()
-                    onHueChange(colorForPosition(change.position, updatedCenter))
+                    currentOnHueChange(colorForPosition(change.position, currentCenter))
                 }
             }
             .drawWithCache {
