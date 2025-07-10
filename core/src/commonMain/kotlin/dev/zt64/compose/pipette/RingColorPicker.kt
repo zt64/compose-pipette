@@ -54,11 +54,9 @@ public fun RingColorPicker(
     },
     onColorChangeFinished: () -> Unit = {}
 ) {
-    val updatedColor by rememberUpdatedState(color)
-
     RingColorPicker(
-        hue = { updatedColor().hue },
-        onHueChange = { hue -> onColorChange(updatedColor().copy(hue = hue)) },
+        hue = { color().hue },
+        onHueChange = { hue -> onColorChange(color().copy(hue = hue)) },
         modifier = modifier,
         interactionSource = interactionSource,
         ringStrokeWidth = ringStrokeWidth,
