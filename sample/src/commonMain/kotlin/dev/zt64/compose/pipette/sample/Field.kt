@@ -13,7 +13,8 @@ import kotlin.math.roundToInt
 
 @OptIn(ExperimentalStdlibApi::class)
 @Composable
-fun HexField(color: HsvColor, onColorChange: (HsvColor) -> Unit) {
+fun HexField(color: () -> HsvColor, onColorChange: (HsvColor) -> Unit) {
+    val color = color()
     val hex = remember(color) {
         "#" + listOf(color.red, color.green, color.blue).joinToString("") {
             (it * 255).roundToInt().toString(16).padStart(2, '0')
@@ -39,7 +40,8 @@ fun HexField(color: HsvColor, onColorChange: (HsvColor) -> Unit) {
 }
 
 @Composable
-fun RgbField(color: HsvColor, onColorChange: (HsvColor) -> Unit) {
+fun RgbField(color: () -> HsvColor, onColorChange: (HsvColor) -> Unit) {
+    val color = color()
     val rgbString = remember(color) {
         listOf(color.red, color.green, color.blue).joinToString(", ") {
             (it * 255).roundToInt().toString()
@@ -65,7 +67,8 @@ fun RgbField(color: HsvColor, onColorChange: (HsvColor) -> Unit) {
 }
 
 @Composable
-fun HsvField(hsvColor: HsvColor, onColorChange: (HsvColor) -> Unit) {
+fun HsvField(hsvColor: () -> HsvColor, onColorChange: (HsvColor) -> Unit) {
+    val hsvColor = hsvColor()
     val hsvString = remember(hsvColor) {
         "${hsvColor.hue.roundToInt()}°, ${(hsvColor.saturation * 100).roundToInt()}%, ${(hsvColor.value * 100).roundToInt()}%"
     }
