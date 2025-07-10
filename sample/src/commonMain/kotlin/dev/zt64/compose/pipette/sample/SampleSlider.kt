@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SampleSlider(
-    value: Float,
+    value: () -> Float,
     onValueChange: (Float) -> Unit,
     valueRange: ClosedFloatingPointRange<Float>,
     text: String,
@@ -36,7 +36,7 @@ fun SampleSlider(
         Spacer(Modifier.height(8.dp))
 
         Slider(
-            value = value,
+            value = value(),
             onValueChange = onValueChange,
             thumb = {
                 val interactions = remember { mutableStateListOf<Interaction>() }

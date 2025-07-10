@@ -44,21 +44,19 @@ import kotlin.math.*
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun RingColorPicker(
-    color: HsvColor,
+    color: () -> HsvColor,
     onColorChange: (HsvColor) -> Unit,
     modifier: Modifier = Modifier,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     ringStrokeWidth: Dp = 16.dp,
     thumb: @Composable () -> Unit = {
-        ColorPickerDefaults.Thumb(Color.hsv(color.hue, 1f, 1f), interactionSource)
+        ColorPickerDefaults.Thumb(Color.hsv(color().hue, 1f, 1f), interactionSource)
     },
     onColorChangeFinished: () -> Unit = {}
 ) {
-    val updatedColor by rememberUpdatedState(color)
-
     RingColorPicker(
-        hue = updatedColor.hue,
-        onHueChange = { hue -> onColorChange(updatedColor.copy(hue = hue)) },
+        hue = { color().hue },
+        onHueChange = { hue -> onColorChange(color().copy(hue = hue)) },
         modifier = modifier,
         interactionSource = interactionSource,
         ringStrokeWidth = ringStrokeWidth,
@@ -88,15 +86,15 @@ public fun RingColorPicker(
  */
 @Composable
 public fun RingColorPicker(
-    hue: Float,
-    saturation: Float = 1f,
-    value: Float = 1f,
+    hue: () -> Float,
+    saturation: () -> Float = { 1f },
+    value: () -> Float = { 1f },
     onHueChange: (Float) -> Unit,
     modifier: Modifier = Modifier,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     ringStrokeWidth: Dp = 16.dp,
     thumb: @Composable () -> Unit = {
-        ColorPickerDefaults.Thumb(Color.hsv(hue, saturation, value), interactionSource)
+        ColorPickerDefaults.Thumb(Color.hsv(hue(), saturation(), value()), interactionSource)
     },
     onColorChangeFinished: () -> Unit = {}
 ) {
@@ -104,18 +102,6 @@ public fun RingColorPicker(
     var radius by remember { mutableStateOf(0f) }
     var center by remember { mutableStateOf(Offset.Zero) }
     val strokeWidth = with(LocalDensity.current) { ringStrokeWidth.toPx() }
-
-    val brush = remember(saturation, value) {
-        Brush.sweepGradient(
-            List(7) {
-                Color.hsv(
-                    hue = (it * 60).toFloat(),
-                    saturation = saturation,
-                    value = value
-                )
-            }
-        )
-    }
 
     fun updateHandlePosition(position: Offset) {
         val (dx, dy) = position - center
@@ -168,6 +154,16 @@ public fun RingColorPicker(
                 }
             }
             .drawWithCache {
+                val brush = Brush.sweepGradient(
+                    List(7) {
+                        Color.hsv(
+                            hue = (it * 60).toFloat(),
+                            saturation = saturation(),
+                            value = value()
+                        )
+                    }
+                )
+
                 onDrawBehind {
                     drawCircle(
                         brush = brush,
@@ -179,7 +175,7 @@ public fun RingColorPicker(
     ) {
         Box(
             modifier = Modifier.offset {
-                val rad = hue * (PI / 180).toFloat()
+                val rad = hue() * (PI / 180).toFloat()
                 val x = center.x + radius * cos(rad)
                 val y = center.y + radius * sin(rad)
 

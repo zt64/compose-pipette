@@ -1,6 +1,5 @@
 package dev.zt64.compose.pipette.sample
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,6 +13,8 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -129,17 +130,17 @@ fun Sample() {
                                 modifier = Modifier.fillMaxHeight()
                             ) {
                                 HexField(
-                                    color = hsvColor,
+                                    color = { hsvColor },
                                     onColorChange = { hsvColor = it }
                                 )
 
                                 RgbField(
-                                    color = hsvColor,
+                                    color = { hsvColor },
                                     onColorChange = { hsvColor = it }
                                 )
 
                                 HsvField(
-                                    hsvColor = hsvColor,
+                                    hsvColor = { hsvColor },
                                     onColorChange = { hsvColor = it }
                                 )
                             }
@@ -150,7 +151,10 @@ fun Sample() {
                                 modifier = Modifier
                                     .width(100.dp)
                                     .fillMaxHeight()
-                                    .background(hsvColor.toColor(), MaterialTheme.shapes.medium)
+                                    .clip(MaterialTheme.shapes.medium)
+                                    .drawBehind {
+                                        drawRect(hsvColor.toColor())
+                                    }
                             )
                         }
 
@@ -162,7 +166,7 @@ fun Sample() {
                             Spacer(Modifier.height(6.dp))
 
                             CircularColorPicker(
-                                color = hsvColor,
+                                color = { hsvColor },
                                 onColorChange = { hsvColor = it }
                             )
                         }
@@ -175,7 +179,7 @@ fun Sample() {
                             Spacer(Modifier.height(6.dp))
 
                             SquareColorPicker(
-                                color = hsvColor,
+                                color = { hsvColor },
                                 onColorChange = { hsvColor = it },
                                 shape = RoundedCornerShape(8.dp)
                             )
@@ -189,14 +193,14 @@ fun Sample() {
                             Spacer(Modifier.height(6.dp))
 
                             RingColorPicker(
-                                color = hsvColor,
+                                color = { hsvColor },
                                 onColorChange = { hsvColor = it }
                             )
                         }
                     }
 
                     SampleSlider(
-                        value = hsvColor.hue,
+                        value = { hsvColor.hue },
                         onValueChange = { hsvColor = hsvColor.copy(hue = it) },
                         valueRange = 0f..359f,
                         text = "Hue",
@@ -214,7 +218,7 @@ fun Sample() {
                     )
 
                     SampleSlider(
-                        value = hsvColor.saturation,
+                        value = { hsvColor.saturation },
                         onValueChange = { hsvColor = hsvColor.copy(saturation = it) },
                         valueRange = 0f..1f,
                         text = "Saturation",
@@ -227,7 +231,7 @@ fun Sample() {
                     )
 
                     SampleSlider(
-                        value = hsvColor.value,
+                        value = { hsvColor.value },
                         onValueChange = { hsvColor = hsvColor.copy(value = it) },
                         valueRange = 0f..1f,
                         text = "Value",

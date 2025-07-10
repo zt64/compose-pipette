@@ -23,7 +23,7 @@ class ColorPickerTest {
         setContent {
             SquareColorPicker(
                 modifier = Modifier.testTag(TEST_TAG),
-                color = color,
+                color = { color },
                 onColorChange = { color = it }
             )
         }
@@ -43,7 +43,7 @@ class ColorPickerTest {
         setContent {
             CircularColorPicker(
                 modifier = Modifier.testTag(TEST_TAG),
-                color = color,
+                color = { color },
                 onColorChange = { color = it }
             )
         }
@@ -76,7 +76,7 @@ class ColorPickerTest {
         setContent {
             RingColorPicker(
                 modifier = Modifier.testTag(TEST_TAG),
-                color = color,
+                color = { color },
                 onColorChange = { color = it }
             )
         }

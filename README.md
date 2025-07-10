@@ -31,7 +31,7 @@ circle. The circle allows for control over the hue and saturation of the color.
 var color by remember { mutableStateOf(HsvColor(Color.Red)) }
 
 CircularColorPicker(
-    color = color,
+    color = { color },
     onColorChange = { color = it }
 )
 ```
@@ -46,7 +46,7 @@ The square allows for control over the saturation and value of the color.
 var color by remember { mutableStateOf(HsvColor(Color.Red)) }
 
 SquareColorPicker(
-    color = color,
+    color = { color },
     onColorChange = { color = it },
     shape = RoundedCornerShape(8.dp),
 )
@@ -62,7 +62,7 @@ component.
 var color by remember { mutableStateOf(HsvColor(Color.Red)) }
 
 RingColorPicker(
-    color = color,
+    color = { color },
     onColorChange = { color = it }
 )
 ```

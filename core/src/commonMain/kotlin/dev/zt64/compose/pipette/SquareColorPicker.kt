@@ -40,31 +40,18 @@ import kotlin.math.roundToInt
  */
 @Composable
 public fun SquareColorPicker(
-    color: HsvColor,
+    color: () -> HsvColor,
     onColorChange: (color: HsvColor) -> Unit,
     modifier: Modifier = Modifier,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     thumb: @Composable () -> Unit = {
-        ColorPickerDefaults.Thumb(color.toColor(), interactionSource)
+        ColorPickerDefaults.Thumb(color().toColor(), interactionSource)
     },
     shape: Shape = RectangleShape,
     onColorChangeFinished: () -> Unit = {}
 ) {
     val scope = rememberCoroutineScope()
     var size by remember { mutableStateOf(IntSize.Zero) }
-    val updatedColor by rememberUpdatedState(color)
-    val saturationBrush = remember {
-        Brush.verticalGradient(listOf(Color.Transparent, Color.Black))
-    }
-
-    val hueBrush = remember(updatedColor.hue) {
-        Brush.horizontalGradient(
-            listOf(
-                Color.Transparent,
-                Color.hsv(updatedColor.hue, 1f, 1f)
-            )
-        )
-    }
 
     Box {
         Canvas(
@@ -75,7 +62,7 @@ public fun SquareColorPicker(
                     detectTapGestures(
                         onTap = {
                             hsvColorForPosition(it, size).let { (s, v) ->
-                                onColorChange(updatedColor.copy(saturation = s, value = v))
+                                onColorChange(color().copy(saturation = s, value = v))
                             }
                             onColorChangeFinished()
                         }
@@ -93,7 +80,7 @@ public fun SquareColorPicker(
                         },
                         onDrag = { change, _ ->
                             hsvColorForPosition(change.position, size).let { (s, v) ->
-                                onColorChange(updatedColor.copy(saturation = s, value = v))
+                                onColorChange(color().copy(saturation = s, value = v))
                             }
                         },
                         onDragEnd = {
@@ -116,6 +103,14 @@ public fun SquareColorPicker(
                 .clip(shape)
                 .graphicsLayer(compositingStrategy = CompositingStrategy.Offscreen)
         ) {
+            val saturationBrush = Brush.verticalGradient(listOf(Color.Transparent, Color.Black))
+            val hueBrush = Brush.horizontalGradient(
+                listOf(
+                    Color.Transparent,
+                    Color.hsv(color().hue, 1f, 1f)
+                )
+            )
+
             drawRect(Color.White)
             drawRect(hueBrush)
             drawRect(saturationBrush)
@@ -124,8 +119,8 @@ public fun SquareColorPicker(
         Box(
             modifier = Modifier.offset {
                 IntOffset(
-                    x = (updatedColor.saturation * size.width).roundToInt(),
-                    y = (size.height - updatedColor.value * size.height).roundToInt()
+                    x = (color().saturation * size.width).roundToInt(),
+                    y = (size.height - color().value * size.height).roundToInt()
                 )
             }
         ) {

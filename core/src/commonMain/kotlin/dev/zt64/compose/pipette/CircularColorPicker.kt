@@ -35,22 +35,20 @@ import kotlin.math.*
  */
 @Composable
 public fun CircularColorPicker(
-    color: HsvColor,
+    color: () -> HsvColor,
     onColorChange: (HsvColor) -> Unit,
     modifier: Modifier = Modifier,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     onColorChangeFinished: () -> Unit = {},
     thumb: @Composable () -> Unit = {
-        ColorPickerDefaults.Thumb(color.toColor(), interactionSource)
+        ColorPickerDefaults.Thumb(color().toColor(), interactionSource)
     }
 ) {
-    val updatedColor by rememberUpdatedState(color)
-
     CircularColorPicker(
-        hue = updatedColor.hue,
-        saturation = updatedColor.saturation,
-        value = updatedColor.value,
-        onColorChange = { h, s -> onColorChange(updatedColor.copy(hue = h, saturation = s)) },
+        hue = { color().hue },
+        saturation = { color().saturation },
+        value = { color().value },
+        onColorChange = { h, s -> onColorChange(color().copy(hue = h, saturation = s)) },
         modifier = modifier,
         interactionSource = interactionSource,
         onColorChangeFinished = onColorChangeFinished,
@@ -76,35 +74,19 @@ public fun CircularColorPicker(
  */
 @Composable
 public fun CircularColorPicker(
-    hue: Float,
-    saturation: Float,
-    value: Float = 1f,
+    hue: () -> Float,
+    saturation: () -> Float,
+    value: () -> Float = { 1f },
     onColorChange: (hue: Float, saturation: Float) -> Unit,
     modifier: Modifier = Modifier,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     onColorChangeFinished: () -> Unit = {},
     thumb: @Composable () -> Unit = {
-        ColorPickerDefaults.Thumb(Color.hsv(hue, saturation, value), interactionSource)
+        ColorPickerDefaults.Thumb(Color.hsv(hue(), saturation(), value()), interactionSource)
     }
 ) {
     val scope = rememberCoroutineScope()
     var radius by remember { mutableStateOf(0f) }
-
-    val hueBrush = remember(value) {
-        Brush.sweepGradient(
-            colors = List(7) { i ->
-                Color.hsv(
-                    hue = i * 60f,
-                    saturation = 1f,
-                    value = value
-                )
-            }
-        )
-    }
-
-    val saturationBrush = remember(value) {
-        Brush.radialGradient(listOf(Color.hsv(0f, 0f, value), Color.Transparent))
-    }
 
     Box(
         modifier = modifier
@@ -150,6 +132,20 @@ public fun CircularColorPicker(
                 }
             }
             .drawWithCache {
+                val v = value()
+                val hueBrush = Brush.sweepGradient(
+                    colors = List(7) { i ->
+                        Color.hsv(
+                            hue = i * 60f,
+                            saturation = 1f,
+                            value = v
+                        )
+                    }
+                )
+                val saturationBrush = Brush.radialGradient(
+                    listOf(Color.hsv(0f, 0f, v), Color.Transparent)
+                )
+
                 onDrawBehind {
                     drawCircle(hueBrush)
                     drawCircle(saturationBrush)
@@ -158,8 +154,8 @@ public fun CircularColorPicker(
     ) {
         Box(
             modifier = Modifier.offset {
-                val angle = hue * (PI / 180).toFloat()
-                val distance = saturation * radius
+                val angle = hue() * (PI / 180).toFloat()
+                val distance = saturation() * radius
 
                 IntOffset(
                     x = (radius + distance * cos(angle)).roundToInt(),
