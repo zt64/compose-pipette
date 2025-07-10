@@ -90,6 +90,10 @@ public fun CircularColorPicker(
     val scope = rememberCoroutineScope()
     var radius by remember { mutableStateOf(0f) }
 
+    val currentOnColorChange by rememberUpdatedState(onColorChange)
+    val currentOnColorChangeFinished by rememberUpdatedState(onColorChangeFinished)
+    val currentRadius by rememberUpdatedState(radius)
+
     val hueBrush = remember(value) {
         Brush.sweepGradient(
             colors = List(7) { i ->
@@ -114,8 +118,8 @@ public fun CircularColorPicker(
             }
             .pointerInput(Unit) {
                 detectTapGestures { tapPosition ->
-                    colorForPosition(tapPosition, radius)?.let { (h, s) ->
-                        onColorChange(h, s)
+                    colorForPosition(tapPosition, currentRadius)?.let { (h, s) ->
+                        currentOnColorChange(h, s)
                     }
                 }
             }
@@ -133,19 +137,19 @@ public fun CircularColorPicker(
                         scope.launch {
                             interaction?.let { interactionSource.emit(DragInteraction.Stop(it)) }
                         }
-                        onColorChangeFinished()
+                        currentOnColorChangeFinished()
                     },
                     onDragCancel = {
                         scope.launch {
                             interaction?.let { interactionSource.emit(DragInteraction.Cancel(it)) }
                         }
-                        onColorChangeFinished()
+                        currentOnColorChangeFinished()
                     }
                 ) { change, _ ->
                     change.consume()
-                    val newPosition = clampPositionToRadius(change.position, radius)
-                    colorForPosition(newPosition, radius)?.let { (h, s) ->
-                        onColorChange(h, s)
+                    val newPosition = clampPositionToRadius(change.position, currentRadius)
+                    colorForPosition(newPosition, currentRadius)?.let { (h, s) ->
+                        currentOnColorChange(h, s)
                     }
                 }
             }

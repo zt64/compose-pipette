@@ -52,16 +52,20 @@ public fun SquareColorPicker(
 ) {
     val scope = rememberCoroutineScope()
     var size by remember { mutableStateOf(IntSize.Zero) }
-    val updatedColor by rememberUpdatedState(color)
     val saturationBrush = remember {
         Brush.verticalGradient(listOf(Color.Transparent, Color.Black))
     }
 
-    val hueBrush = remember(updatedColor.hue) {
+    val currentColor by rememberUpdatedState(color)
+    val currentOnColorChange by rememberUpdatedState(onColorChange)
+    val currentOnColorChangeFinished by rememberUpdatedState(onColorChangeFinished)
+    val currentSize by rememberUpdatedState(size)
+
+    val hueBrush = remember(color.hue) {
         Brush.horizontalGradient(
             listOf(
                 Color.Transparent,
-                Color.hsv(updatedColor.hue, 1f, 1f)
+                Color.hsv(color.hue, 1f, 1f)
             )
         )
     }
@@ -74,10 +78,10 @@ public fun SquareColorPicker(
                 .pointerInput(Unit) {
                     detectTapGestures(
                         onTap = {
-                            hsvColorForPosition(it, size).let { (s, v) ->
-                                onColorChange(updatedColor.copy(saturation = s, value = v))
+                            hsvColorForPosition(it, currentSize).let { (s, v) ->
+                                currentOnColorChange(currentColor.copy(saturation = s, value = v))
                             }
-                            onColorChangeFinished()
+                            currentOnColorChangeFinished()
                         }
                     )
                 }
@@ -92,8 +96,8 @@ public fun SquareColorPicker(
                             }
                         },
                         onDrag = { change, _ ->
-                            hsvColorForPosition(change.position, size).let { (s, v) ->
-                                onColorChange(updatedColor.copy(saturation = s, value = v))
+                            hsvColorForPosition(change.position, currentSize).let { (s, v) ->
+                                currentOnColorChange(currentColor.copy(saturation = s, value = v))
                             }
                         },
                         onDragEnd = {
@@ -102,7 +106,7 @@ public fun SquareColorPicker(
                                     interactionSource.emit(DragInteraction.Stop(it))
                                 }
                             }
-                            onColorChangeFinished()
+                            currentOnColorChangeFinished()
                         },
                         onDragCancel = {
                             scope.launch {
@@ -124,8 +128,8 @@ public fun SquareColorPicker(
         Box(
             modifier = Modifier.offset {
                 IntOffset(
-                    x = (updatedColor.saturation * size.width).roundToInt(),
-                    y = (size.height - updatedColor.value * size.height).roundToInt()
+                    x = (currentColor.saturation * size.width).roundToInt(),
+                    y = (size.height - currentColor.value * size.height).roundToInt()
                 )
             }
         ) {
