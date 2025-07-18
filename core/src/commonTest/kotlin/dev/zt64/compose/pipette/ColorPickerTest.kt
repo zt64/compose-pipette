@@ -90,4 +90,47 @@ class ColorPickerTest {
         assertEquals(1f, color.saturation)
         assertEquals(1f, color.value)
     }
+
+    // Test that clicking in the center of the ring does not change the color
+    @Test
+    fun testRingPickerBounds() = runComposeUiTest {
+        var color by mutableStateOf(HsvColor(Color.Red))
+
+        setContent {
+            RingColorPicker(
+                modifier = Modifier.testTag(TEST_TAG),
+                color = { color },
+                onColorChange = { color = it }
+            )
+        }
+
+        onNodeWithTag(TEST_TAG).performTouchInput {
+            // click in center of the ring
+            click(Offset(width / 2f, height / 3f))
+        }
+
+        // the color should remain unchanged
+        assertEquals(Color.Red, color.toColor())
+    }
+
+    @Test
+    fun testCirclePickerBounds() = runComposeUiTest {
+        var color by mutableStateOf(HsvColor(Color.Red))
+
+        setContent {
+            CircularColorPicker(
+                modifier = Modifier.testTag(TEST_TAG),
+                color = { color },
+                onColorChange = { color = it }
+            )
+        }
+
+        onNodeWithTag(TEST_TAG).performTouchInput {
+            // click in the center of the circle
+            click(Offset(0f, 0f))
+        }
+
+        // the color should remain unchanged
+        assertEquals(Color.Red, color.toColor())
+    }
 }
