@@ -1,7 +1,6 @@
 package dev.zt64.compose.pipette
 
-import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.*
 import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -16,6 +15,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.center
+import androidx.compose.ui.unit.toOffset
 import kotlinx.coroutines.launch
 import kotlin.math.*
 
@@ -95,40 +96,44 @@ public fun CircularColorPicker(
                 radius = it.width / 2f
             }
             .pointerInput(Unit) {
-                detectTapGestures { tapPosition ->
-                    colorForPosition(tapPosition, radius)?.let { (h, s) ->
-                        onColorChange(h, s)
-                    }
-                }
-            }
-            .pointerInput(Unit) {
-                var interaction: DragInteraction.Start? = null
+                awaitEachGesture {
+                    val down = awaitFirstDown()
+                    val downPosition = down.position
+                    val center = size.center.toOffset()
 
-                detectDragGestures(
-                    onDragStart = {
-                        scope.launch {
-                            interaction = DragInteraction.Start()
-                            interactionSource.emit(interaction)
-                        }
-                    },
-                    onDragEnd = {
-                        scope.launch {
-                            interaction?.let { interactionSource.emit(DragInteraction.Stop(it)) }
-                        }
-                        onColorChangeFinished()
-                    },
-                    onDragCancel = {
-                        scope.launch {
-                            interaction?.let { interactionSource.emit(DragInteraction.Cancel(it)) }
-                        }
-                        onColorChangeFinished()
+                    // Check if initial touch is within the circle
+                    if ((downPosition - center).getDistanceSquared() > radius * radius) return@awaitEachGesture
+
+                    // Handle initial tap
+                    updateColorFromPosition(downPosition, center, radius, onColorChange)
+
+                    // Start drag interaction
+                    val interaction = DragInteraction.Start()
+                    scope.launch {
+                        interactionSource.emit(interaction)
                     }
-                ) { change, _ ->
-                    change.consume()
-                    val newPosition = clampPositionToRadius(change.position, radius)
-                    colorForPosition(newPosition, radius)?.let { (h, s) ->
-                        onColorChange(h, s)
+
+                    var change = awaitTouchSlopOrCancellation(down.id) { change, _ ->
+                        change.consume()
+                        val adjustedPosition = clampPositionToRadius(change.position, center, radius)
+                        updateColorFromPosition(adjustedPosition, center, radius, onColorChange)
                     }
+
+                    // Continue dragging
+                    while (change != null && change.pressed) {
+                        change = awaitDragOrCancellation(change.id)
+                        if (change != null && change.pressed) {
+                            change.consume()
+                            val adjustedPosition = clampPositionToRadius(change.position, center, radius)
+                            updateColorFromPosition(adjustedPosition, center, radius, onColorChange)
+                        }
+                    }
+
+                    scope.launch {
+                        interactionSource.emit(DragInteraction.Stop(interaction))
+                    }
+
+                    onColorChangeFinished()
                 }
             }
             .drawWithCache {
@@ -168,32 +173,40 @@ public fun CircularColorPicker(
     }
 }
 
-private fun colorForPosition(position: Offset, radius: Float): Pair<Float, Float>? {
-    val xOffset = position.x - radius
-    val yOffset = position.y - radius
+/**
+ * Get the color for a given position in the circular color picker.
+ *
+ * @return A pair of hue and saturation values, or null if the position is outside the circle.
+ */
+private inline fun updateColorFromPosition(
+    position: Offset,
+    center: Offset,
+    radius: Float,
+    onResult: (hue: Float, saturation: Float) -> Unit
+) {
+    val center = Offset(radius, radius)
+    val offset = position - center
 
-    val centerOffset = hypot(xOffset, yOffset)
-
-    if (centerOffset > radius) return null
-
-    val degrees = atan2(yOffset, xOffset) * (180 / PI).toFloat()
+    val degrees = atan2(offset.y, offset.x) * (180 / PI).toFloat()
     val centerAngle = (degrees + 360) % 360
+    val distance = offset.getDistance()
+    val saturation = (distance / radius).coerceIn(0f, 1f)
 
-    return centerAngle to centerOffset / radius
+    onResult(centerAngle, saturation)
 }
 
-private fun clampPositionToRadius(position: Offset, radius: Float): Offset {
-    val xOffset = position.x - radius
-    val yOffset = position.y - radius
+/**
+ * Clamp the position to the radius of the color picker circle.
+ *
+ * @return The clamped position that lies within the circle of the given radius.
+ */
+private fun clampPositionToRadius(position: Offset, center: Offset, radius: Float): Offset {
+    val offset = position - center
 
-    val centerOffset = hypot(xOffset, yOffset)
+    // If the position is already within the radius, return it as is
+    if (offset.getDistanceSquared() <= radius * radius) return position
 
-    // If the position is outside the circle, adjust it to be on the edge in the same direction
-    return if (centerOffset > radius) {
-        val scale = radius / centerOffset
-        Offset((xOffset * scale) + radius, (yOffset * scale) + radius)
-    } else {
-        // Otherwise, the position is inside the circle so return it as is
-        position
-    }
+    // Otherwise, clamp the position to the edge of the circle
+    val scale = radius / offset.getDistance()
+    return center + (offset * scale)
 }
