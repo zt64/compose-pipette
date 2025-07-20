@@ -144,10 +144,8 @@ public fun RingColorPicker(
                     }
 
                     while (change != null && change.pressed) {
+                        updateHandlePosition(change.position)
                         change = awaitDragOrCancellation(change.id)
-                        if (change != null && change.pressed) {
-                            updateHandlePosition(change.position)
-                        }
                     }
 
                     scope.launch {

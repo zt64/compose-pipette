@@ -121,12 +121,10 @@ public fun CircularColorPicker(
 
                     // Continue dragging
                     while (change != null && change.pressed) {
+                        change.consume()
+                        val adjustedPosition = clampPositionToRadius(change.position, center, radius)
+                        updateColorFromPosition(adjustedPosition, center, radius, onColorChange)
                         change = awaitDragOrCancellation(change.id)
-                        if (change != null && change.pressed) {
-                            change.consume()
-                            val adjustedPosition = clampPositionToRadius(change.position, center, radius)
-                            updateColorFromPosition(adjustedPosition, center, radius, onColorChange)
-                        }
                     }
 
                     scope.launch {
