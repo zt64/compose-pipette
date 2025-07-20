@@ -173,6 +173,8 @@ public fun CircularColorPicker(
     }
 }
 
+private const val RAD_TO_DEG = (180 / PI).toFloat()
+
 /**
  * Get the color for a given position in the circular color picker.
  *
@@ -184,10 +186,9 @@ private inline fun updateColorFromPosition(
     radius: Float,
     onResult: (hue: Float, saturation: Float) -> Unit
 ) {
-    val center = Offset(radius, radius)
     val offset = position - center
 
-    val degrees = atan2(offset.y, offset.x) * (180 / PI).toFloat()
+    val degrees = atan2(offset.y, offset.x) * RAD_TO_DEG
     val centerAngle = (degrees + 360) % 360
     val distance = offset.getDistance()
     val saturation = (distance / radius).coerceIn(0f, 1f)
