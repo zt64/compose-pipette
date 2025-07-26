@@ -1,8 +1,7 @@
 package dev.zt64.compose.pipette
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.*
 import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -59,46 +58,41 @@ public fun SquareColorPicker(
                 .size(ColorPickerDefaults.ComponentSize)
                 .onSizeChanged { size = it }
                 .pointerInput(Unit) {
-                    detectTapGestures(
-                        onTap = {
-                            hsvColorForPosition(it, size).let { (s, v) ->
-                                onColorChange(color().copy(saturation = s, value = v))
-                            }
-                            onColorChangeFinished()
-                        }
-                    )
-                }
-                .pointerInput(Unit) {
-                    var interaction: DragInteraction.Start? = null
+                    awaitEachGesture {
+                        val down = awaitFirstDown()
 
-                    detectDragGestures(
-                        onDragStart = {
-                            scope.launch {
-                                interaction = DragInteraction.Start()
-                                interactionSource.emit(interaction)
-                            }
-                        },
-                        onDrag = { change, _ ->
+                        hsvColorForPosition(down.position, size).let { (s, v) ->
+                            onColorChange(color().copy(saturation = s, value = v))
+                        }
+
+                        // Start drag interaction
+                        val interaction = DragInteraction.Start()
+                        scope.launch {
+                            interactionSource.emit(interaction)
+                        }
+
+                        var change = awaitTouchSlopOrCancellation(down.id) { change, _ ->
+                            change.consume()
                             hsvColorForPosition(change.position, size).let { (s, v) ->
                                 onColorChange(color().copy(saturation = s, value = v))
                             }
-                        },
-                        onDragEnd = {
-                            scope.launch {
-                                interaction?.let {
-                                    interactionSource.emit(DragInteraction.Stop(it))
-                                }
-                            }
-                            onColorChangeFinished()
-                        },
-                        onDragCancel = {
-                            scope.launch {
-                                interaction?.let {
-                                    interactionSource.emit(DragInteraction.Cancel(it))
-                                }
-                            }
                         }
-                    )
+
+                        // Continue dragging
+                        while (change != null && change.pressed) {
+                            change.consume()
+                            hsvColorForPosition(change.position, size).let { (s, v) ->
+                                onColorChange(color().copy(saturation = s, value = v))
+                            }
+                            change = awaitDragOrCancellation(change.id)
+                        }
+
+                        scope.launch {
+                            interactionSource.emit(DragInteraction.Stop(interaction))
+                        }
+
+                        onColorChangeFinished()
+                    }
                 }
                 .clip(shape)
                 .graphicsLayer(compositingStrategy = CompositingStrategy.Offscreen)

@@ -1,8 +1,7 @@
 package dev.zt64.compose.pipette
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.*
 import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -18,9 +17,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.*
 import kotlinx.coroutines.launch
 import kotlin.math.*
 
@@ -121,36 +118,41 @@ public fun RingColorPicker(
                 center = Offset(it.width / 2f, it.height / 2f)
             }
             .pointerInput(Unit) {
-                detectTapGestures { offset ->
-                    updateHandlePosition(offset)
-                    onColorChangeFinished()
-                }
-            }
-            .pointerInput(Unit) {
-                var interaction: DragInteraction.Start? = null
+                awaitEachGesture {
+                    val down = awaitFirstDown()
+                    val downPosition = down.position
+                    val center = size.center.toOffset()
 
-                detectDragGestures(
-                    onDragStart = {
-                        scope.launch {
-                            interaction = DragInteraction.Start()
-                            interactionSource.emit(interaction)
-                        }
-                    },
-                    onDragEnd = {
-                        scope.launch {
-                            interaction?.let { interactionSource.emit(DragInteraction.Stop(it)) }
-                        }
-                        onColorChangeFinished()
-                    },
-                    onDragCancel = {
-                        scope.launch {
-                            interaction?.let { interactionSource.emit(DragInteraction.Cancel(it)) }
-                        }
-                        onColorChangeFinished()
+                    val distanceSquared = (downPosition - center).getDistanceSquared()
+                    val halfStroke = strokeWidth / 2f
+                    val innerRadiusSquared = (radius - halfStroke) * (radius - halfStroke)
+                    val outerRadiusSquared = (radius + halfStroke) * (radius + halfStroke)
+
+                    if (distanceSquared !in innerRadiusSquared..outerRadiusSquared) return@awaitEachGesture
+
+                    // Handle initial tap
+                    updateHandlePosition(downPosition)
+
+                    val interaction = DragInteraction.Start()
+                    scope.launch {
+                        interactionSource.emit(interaction)
                     }
-                ) { change, _ ->
-                    change.consume()
-                    updateHandlePosition(change.position)
+
+                    var change = awaitTouchSlopOrCancellation(down.id) { change, _ ->
+                        change.consume()
+                        updateHandlePosition(change.position)
+                    }
+
+                    while (change != null && change.pressed) {
+                        updateHandlePosition(change.position)
+                        change = awaitDragOrCancellation(change.id)
+                    }
+
+                    scope.launch {
+                        interactionSource.emit(DragInteraction.Stop(interaction))
+                    }
+
+                    onColorChangeFinished()
                 }
             }
             .drawWithCache {
