@@ -157,7 +157,7 @@ public fun CircularColorPicker(
     ) {
         Box(
             modifier = Modifier.offset {
-                val angle = hue() * (PI / 180).toFloat()
+                val angle = hue() * DEG_TO_RAD
                 val distance = saturation() * radius
 
                 IntOffset(
@@ -170,8 +170,6 @@ public fun CircularColorPicker(
         }
     }
 }
-
-private const val RAD_TO_DEG = (180 / PI).toFloat()
 
 /**
  * Get the color for a given position in the circular color picker.

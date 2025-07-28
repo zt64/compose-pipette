@@ -12,6 +12,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import kotlin.math.PI
+
+internal const val DEG_TO_RAD = (PI / 180).toFloat()
+internal const val RAD_TO_DEG = (180 / PI).toFloat()
 
 internal val ThumbRadiusPressed = 14.dp
 internal val ThumbRadius = 10.dp

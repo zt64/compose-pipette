@@ -103,7 +103,7 @@ public fun RingColorPicker(
     fun updateHandlePosition(position: Offset) {
         val (dx, dy) = position - center
         val theta = atan2(dy, dx)
-        var angle = theta * (180.0 / PI).toFloat()
+        var angle = theta * RAD_TO_DEG
 
         if (angle < 0) angle += 360f
 
@@ -177,7 +177,7 @@ public fun RingColorPicker(
     ) {
         Box(
             modifier = Modifier.offset {
-                val rad = hue() * (PI / 180).toFloat()
+                val rad = hue() * DEG_TO_RAD
                 val x = center.x + radius * cos(rad)
                 val y = center.y + radius * sin(rad)
 
