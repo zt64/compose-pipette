@@ -14,7 +14,7 @@ compatibility = "0.18.1"
 publish = "0.33.0"
 ktlintPlugin = "13.0.0"
 ktlint = "1.5.0"
-ktlintRules-compose = "0.4.26"
+ktlintRules-compose = "0.4.27"
 
 [libraries]
 # Sample dependencies
