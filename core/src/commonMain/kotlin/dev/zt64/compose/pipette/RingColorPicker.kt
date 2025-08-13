@@ -144,6 +144,7 @@ public fun RingColorPicker(
                     }
 
                     while (change != null && change.pressed) {
+                        change.consume()
                         updateHandlePosition(change.position)
                         change = awaitDragOrCancellation(change.id)
                     }
