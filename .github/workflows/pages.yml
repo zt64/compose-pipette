@@ -27,7 +27,7 @@ jobs:
       - name: Build
         run: ./gradlew :sample:wasmJsBrowserDistribution
 
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v4
         with:
           path: sample/build/dist/wasmJs/productionExecutable
 
