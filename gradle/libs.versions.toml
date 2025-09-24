@@ -6,7 +6,7 @@ android = "8.13.0"
 # Sample dependency versions
 materialKolor = "3.0.1"
 settings = "1.3.0"
-androidActivity = "1.10.1"
+androidActivity = "1.11.0"
 appcompat = "1.7.1"
 
 # Maintenance versions
