@@ -9,12 +9,12 @@
     ],
     "packageRules": [
         {
-            "matchPackagePatterns": [
-                "^com.android.tools.build:gradle$",
-                "^com.android:android-gradle$",
-                "^com.android.application$"
-            ],
-            "enabled": false
+            "enabled": false,
+            "matchPackageNames": [
+                "/^com.android.tools.build:gradle$/",
+                "/^com.android:android-gradle$/",
+                "/^com.android.application$/"
+            ]
         }
     ]
 }
