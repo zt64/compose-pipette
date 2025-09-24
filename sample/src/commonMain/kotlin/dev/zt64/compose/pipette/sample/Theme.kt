@@ -38,7 +38,7 @@ fun Theme(color: () -> HsvColor, theme: Theme, useDynamicTheme: Boolean, content
                     it.toColor()
                 }
             },
-            useDarkTheme = theme == Theme.DARK || theme == Theme.SYSTEM && isSystemInDarkTheme(),
+            isDark = theme == Theme.DARK || theme == Theme.SYSTEM && isSystemInDarkTheme(),
             style = PaletteStyle.Fidelity,
             content = content
         )
