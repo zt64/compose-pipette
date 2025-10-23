@@ -1,5 +1,5 @@
 [versions]
-kotlin = "2.2.20"
+kotlin = "2.2.21"
 compose-jb = "1.9.0"
 android = "8.13.0"
 
