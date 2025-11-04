@@ -100,15 +100,8 @@ public fun RingColorPicker(
     var center by remember { mutableStateOf(Offset.Zero) }
     val strokeWidth = with(LocalDensity.current) { ringStrokeWidth.toPx() }
 
-    fun updateHandlePosition(position: Offset) {
-        val (dx, dy) = position - center
-        val theta = atan2(dy, dx)
-        var angle = theta * RAD_TO_DEG
-
-        if (angle < 0) angle += 360f
-
-        onHueChange(angle)
-    }
+    val currentOnHueChange by rememberUpdatedState(onHueChange)
+    val currentOnColorChangeFinished by rememberUpdatedState(onColorChangeFinished)
 
     Box(
         modifier = modifier
@@ -131,7 +124,7 @@ public fun RingColorPicker(
                     if (distanceSquared !in innerRadiusSquared..outerRadiusSquared) return@awaitEachGesture
 
                     // Handle initial tap
-                    updateHandlePosition(downPosition)
+                    currentOnHueChange(hueForPosition(downPosition, center))
 
                     val interaction = DragInteraction.Start()
                     scope.launch {
@@ -140,12 +133,12 @@ public fun RingColorPicker(
 
                     var change = awaitTouchSlopOrCancellation(down.id) { change, _ ->
                         change.consume()
-                        updateHandlePosition(change.position)
+                        currentOnHueChange(hueForPosition(change.position, center))
                     }
 
                     while (change != null && change.pressed) {
                         change.consume()
-                        updateHandlePosition(change.position)
+                        currentOnHueChange(hueForPosition(change.position, center))
                         change = awaitDragOrCancellation(change.id)
                     }
 
@@ -153,7 +146,7 @@ public fun RingColorPicker(
                         interactionSource.emit(DragInteraction.Stop(interaction))
                     }
 
-                    onColorChangeFinished()
+                    currentOnColorChangeFinished()
                 }
             }
             .drawWithCache {
@@ -188,4 +181,14 @@ public fun RingColorPicker(
             thumb()
         }
     }
+}
+
+private fun hueForPosition(position: Offset, center: Offset): Float {
+    val (dx, dy) = position - center
+    val theta = atan2(dy, dx)
+    var angle = theta * RAD_TO_DEG
+
+    if (angle < 0) angle += 360f
+
+    return angle
 }

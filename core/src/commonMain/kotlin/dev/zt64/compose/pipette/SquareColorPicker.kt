@@ -52,6 +52,10 @@ public fun SquareColorPicker(
     val scope = rememberCoroutineScope()
     var size by remember { mutableStateOf(IntSize.Zero) }
 
+    val currentColor by rememberUpdatedState(color)
+    val currentOnColorChange by rememberUpdatedState(onColorChange)
+    val currentOnColorChangeFinished by rememberUpdatedState(onColorChangeFinished)
+
     Box {
         Canvas(
             modifier = modifier
@@ -62,7 +66,7 @@ public fun SquareColorPicker(
                         val down = awaitFirstDown()
 
                         hsvColorForPosition(down.position, size).let { (s, v) ->
-                            onColorChange(color().copy(saturation = s, value = v))
+                            currentOnColorChange(currentColor().copy(saturation = s, value = v))
                         }
 
                         // Start drag interaction
@@ -74,7 +78,7 @@ public fun SquareColorPicker(
                         var change = awaitTouchSlopOrCancellation(down.id) { change, _ ->
                             change.consume()
                             hsvColorForPosition(change.position, size).let { (s, v) ->
-                                onColorChange(color().copy(saturation = s, value = v))
+                                currentOnColorChange(currentColor().copy(saturation = s, value = v))
                             }
                         }
 
@@ -82,7 +86,7 @@ public fun SquareColorPicker(
                         while (change != null && change.pressed) {
                             change.consume()
                             hsvColorForPosition(change.position, size).let { (s, v) ->
-                                onColorChange(color().copy(saturation = s, value = v))
+                                currentOnColorChange(currentColor().copy(saturation = s, value = v))
                             }
                             change = awaitDragOrCancellation(change.id)
                         }
@@ -91,7 +95,7 @@ public fun SquareColorPicker(
                             interactionSource.emit(DragInteraction.Stop(interaction))
                         }
 
-                        onColorChangeFinished()
+                        currentOnColorChangeFinished()
                     }
                 }
                 .clip(shape)
