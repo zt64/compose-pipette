@@ -89,6 +89,9 @@ public fun CircularColorPicker(
     val scope = rememberCoroutineScope()
     var radius by remember { mutableStateOf(0f) }
 
+    val currentOnColorChange by rememberUpdatedState(onColorChange)
+    val currentOnColorChangeFinished by rememberUpdatedState(onColorChangeFinished)
+
     Box(
         modifier = modifier
             .size(ColorPickerDefaults.ComponentSize)
@@ -105,7 +108,7 @@ public fun CircularColorPicker(
                     if ((downPosition - center).getDistanceSquared() > radius * radius) return@awaitEachGesture
 
                     // Handle initial tap
-                    updateColorFromPosition(downPosition, center, radius, onColorChange)
+                    updateColorFromPosition(downPosition, center, radius, currentOnColorChange)
 
                     // Start drag interaction
                     val interaction = DragInteraction.Start()
@@ -116,14 +119,14 @@ public fun CircularColorPicker(
                     var change = awaitTouchSlopOrCancellation(down.id) { change, _ ->
                         change.consume()
                         val adjustedPosition = clampPositionToRadius(change.position, center, radius)
-                        updateColorFromPosition(adjustedPosition, center, radius, onColorChange)
+                        updateColorFromPosition(adjustedPosition, center, radius, currentOnColorChange)
                     }
 
                     // Continue dragging
                     while (change != null && change.pressed) {
                         change.consume()
                         val adjustedPosition = clampPositionToRadius(change.position, center, radius)
-                        updateColorFromPosition(adjustedPosition, center, radius, onColorChange)
+                        updateColorFromPosition(adjustedPosition, center, radius, currentOnColorChange)
                         change = awaitDragOrCancellation(change.id)
                     }
 
@@ -131,7 +134,7 @@ public fun CircularColorPicker(
                         interactionSource.emit(DragInteraction.Stop(interaction))
                     }
 
-                    onColorChangeFinished()
+                    currentOnColorChangeFinished()
                 }
             }
             .drawWithCache {
