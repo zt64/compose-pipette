@@ -15,6 +15,14 @@ Supported platforms:
 - macOS (untested)
 - iOS (untested)
 
+## Motivation
+
+While there are several color picker libraries available for Compose, they all have opinionated designs and
+implementations, making it difficult for developers to customize them to fit their needs.
+Compose-pipette aims to fill this gap by providing the base components for color picking, allowing developers to
+build their own custom color pickers on top of them. The library is designed to be minimal and dependency-free, making
+it simple to integrate into any project.
+
 ## Styles
 
 Compose-pipette comes with three different components for selecting colors: `CircularColorPicker`, `SquareColorPicker`
