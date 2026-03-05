@@ -29,7 +29,7 @@ kotlin {
 
                 implementation(libs.compose.runtime)
                 implementation(libs.compose.material3)
-                implementation(libs.compose.materialIconsExtended)
+                implementation(libs.compose.materialIcons.core)
 
                 implementation(libs.materialKolor)
             }

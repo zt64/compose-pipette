@@ -1,4 +1,4 @@
-package dev.zt64.compose.pipette.sample
+package dev.zt64.compose.pipette.sample.ui.icon
 
 import androidx.compose.material.icons.materialIcon
 import androidx.compose.material.icons.materialPath

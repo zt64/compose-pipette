@@ -28,7 +28,7 @@ compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", v
 compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "compose-jb" }
 compose-ui-test = { module = "org.jetbrains.compose.ui:ui-test", version.ref = "compose-jb" }
 compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "compose-material3" }
-compose-materialIconsExtended = { module = "org.jetbrains.compose.material:material-icons-extended", version = "1.7.3" }
+compose-materialIcons-core = { module = "org.jetbrains.compose.material:material-icons-core", version = "1.7.3" }
 
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 

@@ -1,13 +1,10 @@
 package dev.zt64.compose.pipette.sample
 
+import PaletteFilled
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.SwitchLeft
-import androidx.compose.material.icons.filled.SwitchRight
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -21,6 +18,10 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import dev.zt64.compose.pipette.*
+import dev.zt64.compose.pipette.sample.ui.icon.GithubIcon
+import dev.zt64.compose.pipette.sample.ui.icon.Palette
+import dev.zt64.compose.pipette.sample.ui.icon.Refresh
+import dev.zt64.compose.pipette.sample.ui.theme.Theme
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -65,9 +66,9 @@ fun Sample() {
                         ) {
                             Icon(
                                 imageVector = if (useDynamicTheme) {
-                                    Icons.Default.SwitchLeft
+                                    PaletteFilled
                                 } else {
-                                    Icons.Default.SwitchRight
+                                    Palette
                                 },
                                 contentDescription = null
                             )
@@ -252,7 +253,7 @@ fun Sample() {
                         }
                     ) {
                         Icon(
-                            imageVector = Icons.Default.Refresh,
+                            imageVector = Refresh,
                             contentDescription = null
                         )
                         Spacer(Modifier.width(ButtonDefaults.IconSpacing))

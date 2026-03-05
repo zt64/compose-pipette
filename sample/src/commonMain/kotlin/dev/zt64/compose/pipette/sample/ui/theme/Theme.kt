@@ -1,9 +1,7 @@
-package dev.zt64.compose.pipette.sample
+package dev.zt64.compose.pipette.sample.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DarkMode
-import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -15,11 +13,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import com.materialkolor.DynamicMaterialTheme
 import com.materialkolor.PaletteStyle
 import dev.zt64.compose.pipette.HsvColor
+import dev.zt64.compose.pipette.sample.ui.icon.DarkMode
+import dev.zt64.compose.pipette.sample.ui.icon.LightMode
 
 @Stable
 enum class Theme(val icon: ImageVector, val label: String) {
-    LIGHT(Icons.Default.LightMode, "Light"),
-    DARK(Icons.Default.DarkMode, "Dark"),
+    LIGHT(LightMode, "Light"),
+    DARK(DarkMode, "Dark"),
     SYSTEM(Icons.Default.Settings, "System")
 }
 
