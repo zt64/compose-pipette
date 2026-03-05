@@ -32,7 +32,6 @@ kotlin {
                 implementation(libs.compose.materialIconsExtended)
 
                 implementation(libs.materialKolor)
-                implementation(libs.settings)
             }
         }
 
