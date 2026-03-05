@@ -27,9 +27,9 @@ kotlin {
             dependencies {
                 implementation(projects.core)
 
-                implementation(compose.runtime)
-                implementation(compose.material3)
-                implementation(compose.materialIconsExtended)
+                implementation(libs.compose.runtime)
+                implementation(libs.compose.material3)
+                implementation(libs.compose.materialIconsExtended)
 
                 implementation(libs.materialKolor)
                 implementation(libs.settings)
