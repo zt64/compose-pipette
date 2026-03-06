@@ -12,8 +12,8 @@ Supported platforms:
 - Android (minimum API level 21)
 - Kotlin/JS
 - Kotlin/WASM
-- macOS (untested)
-- iOS (untested)
+- macOS
+- iOS
 
 ## Motivation
 
