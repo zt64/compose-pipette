@@ -7,6 +7,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.progressSemantics
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
@@ -168,6 +169,11 @@ public fun RingColorPicker(
                     )
                 }
             }
+            .progressSemantics(
+                value = hue(),
+                valueRange = 0f..360f,
+                steps = 360
+            )
     ) {
         Box(
             modifier = Modifier.offset {
