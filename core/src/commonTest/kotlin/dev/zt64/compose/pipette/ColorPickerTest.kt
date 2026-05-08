@@ -91,6 +91,108 @@ class ColorPickerTest {
         assertEquals(1f, color.value)
     }
 
+    @Test
+    fun testSquarePickerTopLeft() = runComposeUiTest {
+        var color by mutableStateOf(HsvColor(Color.Red))
+
+        setContent {
+            SquareColorPicker(
+                modifier = Modifier.testTag(TEST_TAG),
+                color = { color },
+                onColorChange = { color = it }
+            )
+        }
+
+        onNodeWithTag(TEST_TAG).performTouchInput {
+            click(Offset(0f, 0f)) // top-left = white: S=0, V=1
+        }
+
+        assertEquals(0f, color.saturation)
+        assertEquals(1f, color.value)
+    }
+
+    @Test
+    fun testSquarePickerBottomRight() = runComposeUiTest {
+        var color by mutableStateOf(HsvColor(Color.Red))
+
+        setContent {
+            SquareColorPicker(
+                modifier = Modifier.testTag(TEST_TAG),
+                color = { color },
+                onColorChange = { color = it }
+            )
+        }
+
+        onNodeWithTag(TEST_TAG).performTouchInput {
+            click(Offset(width.toFloat(), height.toFloat())) // bottom-right = darkest: S=1, V=0
+        }
+
+        assertEquals(1f, color.saturation)
+        assertEquals(1f, color.value)
+    }
+
+    @Test
+    fun testSquarePickerOnColorChangeFinished() = runComposeUiTest {
+        var finishedCount = 0
+        var color by mutableStateOf(HsvColor(Color.Red))
+
+        setContent {
+            SquareColorPicker(
+                modifier = Modifier.testTag(TEST_TAG),
+                color = { color },
+                onColorChange = { color = it },
+                onColorChangeFinished = { finishedCount++ }
+            )
+        }
+
+        onNodeWithTag(TEST_TAG).performTouchInput {
+            swipe(
+                start = Offset(width * 0.2f, height * 0.2f),
+                end = Offset(width * 0.8f, height * 0.8f)
+            )
+        }
+
+        assertEquals(1, finishedCount)
+    }
+
+    @Test
+    fun testRingPickerRight() = runComposeUiTest {
+        var color by mutableStateOf(HsvColor(Color.Red))
+
+        setContent {
+            RingColorPicker(
+                modifier = Modifier.testTag(TEST_TAG),
+                color = { color },
+                onColorChange = { color = it }
+            )
+        }
+
+        onNodeWithTag(TEST_TAG).performTouchInput {
+            click(Offset(width.toFloat(), height / 2f)) // far right point = hue 0
+        }
+
+        assertEquals(0f, round(color.hue))
+    }
+
+    @Test
+    fun testRingPickerLeft() = runComposeUiTest {
+        var color by mutableStateOf(HsvColor(Color.Red))
+
+        setContent {
+            RingColorPicker(
+                modifier = Modifier.testTag(TEST_TAG),
+                color = { color },
+                onColorChange = { color = it }
+            )
+        }
+
+        onNodeWithTag(TEST_TAG).performTouchInput {
+            click(Offset(0f, height / 2f)) // far left point = hue 180
+        }
+
+        assertEquals(180f, round(color.hue))
+    }
+
     // Test that clicking in the center of the ring does not change the color
     @Test
     fun testRingPickerBounds() = runComposeUiTest {
