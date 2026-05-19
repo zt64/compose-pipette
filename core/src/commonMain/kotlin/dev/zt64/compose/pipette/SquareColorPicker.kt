@@ -1,7 +1,10 @@
 package dev.zt64.compose.pipette
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.gestures.*
+import androidx.compose.foundation.gestures.awaitDragOrCancellation
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.awaitTouchSlopOrCancellation
 import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -105,7 +108,7 @@ public fun SquareColorPicker(
             val hueBrush = Brush.horizontalGradient(
                 listOf(
                     Color.Transparent,
-                    Color.hsv(color().hue, 1f, 1f)
+                    Color.hsv(currentColor().hue, 1f, 1f)
                 )
             )
 
@@ -117,8 +120,8 @@ public fun SquareColorPicker(
         Box(
             modifier = Modifier.offset {
                 IntOffset(
-                    x = (color().saturation * size.width).roundToInt(),
-                    y = (size.height - color().value * size.height).roundToInt()
+                    x = (currentColor().saturation * size.width).roundToInt(),
+                    y = (size.height - currentColor().value * size.height).roundToInt()
                 )
             }
         ) {
