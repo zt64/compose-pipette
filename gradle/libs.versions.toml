@@ -5,7 +5,7 @@ compose-material3 = "1.10.0-alpha05"
 android = "9.3.0"
 
 # Sample dependency versions
-materialKolor = "4.1.1"
+materialKolor = "5.0.0"
 androidActivity = "1.13.0"
 appcompat = "1.7.1"
 
