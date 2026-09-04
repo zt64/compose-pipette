@@ -10,7 +10,7 @@ androidActivity = "1.13.0"
 appcompat = "1.8.0"
 
 # Maintenance versions
-compatibility = "0.18.1"
+compatibility = "0.18.2"
 publish = "0.37.0"
 ktlintPlugin = "14.2.0"
 ktlint = "1.5.0"
