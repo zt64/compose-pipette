@@ -11,6 +11,10 @@ pluginManagement {
     includeBuild("build-logic")
 }
 
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
+}
+
 dependencyResolutionManagement {
     repositories {
         mavenCentral()
@@ -20,3 +24,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "compose-pipette"
 include("core", "sample")
+include("sample:shared")
+include("sample:android")
