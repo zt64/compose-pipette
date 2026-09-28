@@ -4,12 +4,14 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.VersionCatalog
 import org.gradle.api.artifacts.VersionCatalogsExtension
-import org.gradle.kotlin.dsl.*
+import org.gradle.kotlin.dsl.apply
+import org.gradle.kotlin.dsl.configure
+import org.gradle.kotlin.dsl.dependencies
+import org.gradle.kotlin.dsl.getByType
+import org.gradle.kotlin.dsl.invoke
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jlleitschuh.gradle.ktlint.KtlintExtension
-import java.util.*
 
 internal val Project.libs: VersionCatalog
     get() = extensions.getByType<VersionCatalogsExtension>().named("libs")
@@ -36,14 +38,10 @@ class KmpLibraryPlugin : Plugin<Project> {
             sourceSets {
                 commonMain {
                     dependencies {
-                        if (target.name != "core" && target.name != "util") {
+                        // Every published module except `core` itself depends on it for shared code
+                        if (target.name != "core") {
                             implementation(target.project(":core"))
                         }
-
-                        // implementation(compose.ui)
-                        // implementation(compose.foundation)
-                        // implementation(target.libs.findLibrary("compose.ui").get())
-                        // implementation(target.libs.findLibrary("compose.foundation").get())
                     }
                 }
 
@@ -78,17 +76,4 @@ class KmpLibraryPlugin : Plugin<Project> {
     private fun configurePublishing(target: Project) {
         target.apply(plugin = "com.vanniktech.maven.publish")
     }
-}
-
-fun KotlinMultiplatformExtension.apple(configure: KotlinNativeTarget.() -> Unit = {}) {
-    val isMacOs = System.getProperty("os.name").lowercase(Locale.getDefault()).contains("mac")
-
-    if (!isMacOs) return
-
-    listOf(
-        iosX64(),
-        iosArm64(),
-        iosSimulatorArm64(),
-        macosArm64()
-    ).forEach(configure)
 }

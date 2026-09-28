@@ -23,6 +23,6 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "compose-pipette"
-include("core", "sample")
+include("core")
 include("sample:shared")
 include("sample:android")

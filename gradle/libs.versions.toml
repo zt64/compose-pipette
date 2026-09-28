@@ -35,9 +35,11 @@ ktlint-rules-compose = { module = "io.nlopez.compose.rules:ktlint", version.ref 
 
 [plugins]
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 compose-jb = { id = "org.jetbrains.compose", version.ref = "compose-jb" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 android-application = { id = "com.android.application", version.ref = "android" }
+android-mp-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "android" }
 
 compatibility = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "compatibility" }
 publish = { id = "com.vanniktech.maven.publish", version.ref = "publish" }
