@@ -25,11 +25,11 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
 
       - name: Build
-        run: ./gradlew :sample:wasmJsBrowserDistribution
+        run: ./gradlew :sample:shared:wasmJsBrowserDistribution
 
       - uses: actions/upload-pages-artifact@v5
         with:
-          path: sample/build/dist/wasmJs/productionExecutable
+          path: sample/shared/build/dist/wasmJs/productionExecutable
 
   deploy:
     name: "Deploy Pages"
