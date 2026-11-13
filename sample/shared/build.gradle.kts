@@ -16,6 +16,12 @@ kotlin {
         minSdk = 24
     }
 
+    // Fix for https://youtrack.jetbrains.com/issue/CMP-4906, TODO: Remove once compose v1.13.0 goes stable
+    js {
+        browser()
+        binaries.executable()
+    }
+
     wasmJs {
         outputModuleName = "sample"
         browser {
