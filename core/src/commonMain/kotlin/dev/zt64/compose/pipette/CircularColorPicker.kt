@@ -1,6 +1,9 @@
 package dev.zt64.compose.pipette
 
-import androidx.compose.foundation.gestures.*
+import androidx.compose.foundation.gestures.awaitDragOrCancellation
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.awaitTouchSlopOrCancellation
 import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -18,7 +21,10 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.center
 import androidx.compose.ui.unit.toOffset
 import kotlinx.coroutines.launch
-import kotlin.math.*
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.roundToInt
+import kotlin.math.sin
 
 /**
  * Circular color picker that allows the user to select a hue by dragging a thumb around the circle.
@@ -79,6 +85,7 @@ public fun CircularColorPicker(
     saturation: () -> Float,
     value: () -> Float = { 1f },
     onColorChange: (hue: Float, saturation: Float) -> Unit,
+    @Suppress("ModifierParameter")
     modifier: Modifier = Modifier,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     onColorChangeFinished: () -> Unit = {},
@@ -118,15 +125,13 @@ public fun CircularColorPicker(
 
                     var change = awaitTouchSlopOrCancellation(down.id) { change, _ ->
                         change.consume()
-                        val adjustedPosition = clampPositionToRadius(change.position, center, radius)
-                        updateColorFromPosition(adjustedPosition, center, radius, currentOnColorChange)
+                        updateColorFromPosition(change.position, center, radius, currentOnColorChange)
                     }
 
                     // Continue dragging
                     while (change != null && change.pressed) {
                         change.consume()
-                        val adjustedPosition = clampPositionToRadius(change.position, center, radius)
-                        updateColorFromPosition(adjustedPosition, center, radius, currentOnColorChange)
+                        updateColorFromPosition(change.position, center, radius, currentOnColorChange)
                         change = awaitDragOrCancellation(change.id)
                     }
 
@@ -176,8 +181,6 @@ public fun CircularColorPicker(
 
 /**
  * Get the color for a given position in the circular color picker.
- *
- * @return A pair of hue and saturation values, or null if the position is outside the circle.
  */
 private inline fun updateColorFromPosition(
     position: Offset,
@@ -186,27 +189,10 @@ private inline fun updateColorFromPosition(
     onResult: (hue: Float, saturation: Float) -> Unit
 ) {
     val offset = position - center
-
     val degrees = atan2(offset.y, offset.x) * RAD_TO_DEG
-    val centerAngle = (degrees + 360) % 360
+    val hue = if (degrees < 0) degrees + 360 else degrees
     val distance = offset.getDistance()
-    val saturation = (distance / radius).coerceIn(0f, 1f)
+    val saturation = (distance / radius).coerceAtMost(1f)
 
-    onResult(centerAngle, saturation)
-}
-
-/**
- * Clamp the position to the radius of the color picker circle.
- *
- * @return The clamped position that lies within the circle of the given radius.
- */
-private fun clampPositionToRadius(position: Offset, center: Offset, radius: Float): Offset {
-    val offset = position - center
-
-    // If the position is already within the radius, return it as is
-    if (offset.getDistanceSquared() <= radius * radius) return position
-
-    // Otherwise, clamp the position to the edge of the circle
-    val scale = radius / offset.getDistance()
-    return center + (offset * scale)
+    onResult(hue, saturation)
 }
