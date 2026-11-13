@@ -23,6 +23,7 @@ kotlin {
                 outputFileName = "sample.js"
             }
         }
+        binaries.executable()
     }
 
     sourceSets {
