@@ -7,22 +7,10 @@ import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.interaction.Interaction
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Slider
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -38,21 +26,33 @@ internal fun SampleSlider(
     onValueChange: (Float) -> Unit,
     valueRange: ClosedFloatingPointRange<Float>,
     text: String,
-    brush: Brush
+    brush: () -> Brush
 ) {
+    val sliderState = rememberSliderState(valueRange = valueRange)
+
+    SideEffect {
+        sliderState.onValueChange = { newValue ->
+            sliderState.value = newValue
+            onValueChange(newValue)
+        }
+    }
+
+    LaunchedEffect(sliderState) {
+        snapshotFlow { value() }.collect { sliderState.value = it }
+    }
+
     Column {
         val interactionSource = remember { MutableInteractionSource() }
 
         Text(
-            text = "$text slider (demo only)",
+            text = text,
             style = MaterialTheme.typography.titleMedium
         )
 
         Spacer(Modifier.height(8.dp))
 
         Slider(
-            value = value(),
-            onValueChange = onValueChange,
+            state = sliderState,
             thumb = {
                 val interactions = remember { mutableStateListOf<Interaction>() }
 
@@ -92,7 +92,7 @@ internal fun SampleSlider(
                         .fillMaxWidth()
                 ) {
                     drawLine(
-                        brush = brush,
+                        brush = brush(),
                         start = Offset(0f, size.center.y),
                         end = Offset(size.width, size.center.y),
                         strokeWidth = size.height,
@@ -100,7 +100,6 @@ internal fun SampleSlider(
                     )
                 }
             },
-            valueRange = valueRange,
             interactionSource = interactionSource
         )
     }

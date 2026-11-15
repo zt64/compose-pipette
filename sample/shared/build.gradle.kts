@@ -40,6 +40,7 @@ kotlin {
                 implementation(libs.compose.runtime)
                 implementation(libs.compose.material3)
                 implementation(libs.compose.materialIcons.core)
+                implementation(libs.compose.foundation.layout)
 
                 implementation(libs.materialKolor)
             }
