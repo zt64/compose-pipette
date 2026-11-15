@@ -30,6 +30,43 @@ import kotlin.math.sin
  * Circular color picker that allows the user to select a hue by dragging a thumb around the circle.
  * The color is represented in HSV color space with a fixed value.
  *
+ * @param state The color picker state
+ * @param modifier The modifier to be applied to the color picker
+ * @param interactionSource The interaction source for the color picker
+ * @param onColorChangeFinished Callback that is called when the user finishes changing the color
+ * @param thumb Composable that is used to draw the thumb
+ *
+ * @see RingColorPicker
+ * @see SquareColorPicker
+ */
+@Composable
+public fun CircularColorPicker(
+    state: ColorPickerState,
+    modifier: Modifier = Modifier,
+    onColorChange: (HsvColor) -> Unit = {},
+    onColorChangeFinished: () -> Unit = {},
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    thumb: @Composable () -> Unit = {
+        ColorPickerDefaults.Thumb(state.color.toColor(), interactionSource)
+    }
+) {
+    CircularColorPicker(
+        color = { state.color },
+        onColorChange = { color ->
+            onColorChange(color)
+            state.updateColor(color)
+        },
+        modifier = modifier,
+        interactionSource = interactionSource,
+        onColorChangeFinished = onColorChangeFinished,
+        thumb = thumb
+    )
+}
+
+/**
+ * Circular color picker that allows the user to select a hue by dragging a thumb around the circle.
+ * The color is represented in HSV color space with a fixed value.
+ *
  * @param color The current color
  * @param onColorChange Callback that is called when the color changes
  * @param modifier The modifier to be applied to the color picker

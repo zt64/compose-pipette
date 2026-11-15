@@ -22,6 +22,28 @@ import androidx.compose.ui.unit.IntSize
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
+@Composable
+public fun SquareColorPicker(
+    state: ColorPickerState,
+    modifier: Modifier = Modifier,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    thumb: @Composable () -> Unit = {
+        ColorPickerDefaults.Thumb(state.color.toColor(), interactionSource)
+    },
+    shape: Shape = RectangleShape,
+    onColorChangeFinished: () -> Unit = {}
+) {
+    SquareColorPicker(
+        color = { state.color },
+        onColorChange = { state.updateColor(it) },
+        modifier = modifier,
+        interactionSource = interactionSource,
+        thumb = thumb,
+        shape = shape,
+        onColorChangeFinished = onColorChangeFinished
+    )
+}
+
 /**
  * The standard square color picker that allows the user to select a color by dragging a thumb around the color space.
  *

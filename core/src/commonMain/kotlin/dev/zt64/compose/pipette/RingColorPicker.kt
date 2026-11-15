@@ -25,6 +25,32 @@ import androidx.compose.ui.semantics.semantics
 import kotlinx.coroutines.launch
 import kotlin.math.*
 
+@Composable
+public fun RingColorPicker(
+    state: ColorPickerState,
+    modifier: Modifier = Modifier,
+    onColorChange: (HsvColor) -> Unit = {},
+    onColorChangeFinished: () -> Unit = {},
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    ringStrokeWidth: Dp = 16.dp,
+    thumb: @Composable () -> Unit = {
+        ColorPickerDefaults.Thumb(Color.hsv(state.color.hue, 1f, 1f), interactionSource)
+    }
+) {
+    RingColorPicker(
+        color = { state.color },
+        onColorChange = { color ->
+            state.updateColor(color)
+            onColorChange(color)
+        },
+        modifier = modifier,
+        interactionSource = interactionSource,
+        ringStrokeWidth = ringStrokeWidth,
+        thumb = thumb,
+        onColorChangeFinished = onColorChangeFinished
+    )
+}
+
 /**
  * A ring color picker that allows the user to select a hue by rotating a handle around the ring. The ring is
  * a continuous gradient of colors from red to red.

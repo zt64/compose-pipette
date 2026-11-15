@@ -19,7 +19,7 @@ import kotlin.math.max
  */
 @Immutable
 @JvmInline
-public value class HsvColor private constructor(public val packedValue: ULong) {
+public value class HsvColor internal constructor(public val packedValue: ULong) {
     /**
      * The hue of the color, in degrees (0-360).
      */

@@ -32,6 +32,29 @@ import kotlin.math.roundToInt
 
 @Composable
 public fun TriangularColorPicker(
+    state: ColorPickerState,
+    modifier: Modifier = Modifier,
+    onColorChange: (color: HsvColor) -> Unit = {},
+    onColorChangeFinished: () -> Unit = {},
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    thumb: @Composable () -> Unit = {
+        ColorPickerDefaults.Thumb(state.color.toColor(), interactionSource)
+    }
+) {
+    TriangularColorPicker(
+        color = { state.color },
+        onColorChange = { color ->
+            state.updateColor(color)
+            onColorChange(color)
+        },
+        modifier = modifier,
+        interactionSource = interactionSource,
+        thumb = thumb,
+        onColorChangeFinished = onColorChangeFinished
+    )
+}
+@Composable
+public fun TriangularColorPicker(
     color: () -> HsvColor,
     onColorChange: (color: HsvColor) -> Unit,
     modifier: Modifier = Modifier,
