@@ -14,7 +14,14 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlin.math.PI
 
+/**
+ * Multiplication factor for converting degrees to radians
+ */
 internal const val DEG_TO_RAD = (PI / 180).toFloat()
+
+/**
+ * Multiplication factor for converting radians to degrees
+ */
 internal const val RAD_TO_DEG = (180 / PI).toFloat()
 
 internal val ThumbRadiusPressed = 14.dp
