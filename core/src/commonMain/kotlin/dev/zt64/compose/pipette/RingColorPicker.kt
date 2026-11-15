@@ -19,6 +19,9 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.*
+import androidx.compose.ui.semantics.ProgressBarRangeInfo
+import androidx.compose.ui.semantics.progressBarRangeInfo
+import androidx.compose.ui.semantics.semantics
 import kotlinx.coroutines.launch
 import kotlin.math.*
 
@@ -169,11 +172,13 @@ public fun RingColorPicker(
                     )
                 }
             }
-            .progressSemantics(
-                value = hue(),
-                valueRange = 0f..360f,
-                steps = 360
-            )
+            .semantics {
+                progressBarRangeInfo = ProgressBarRangeInfo(
+                    current = hue(),
+                    range = 0f..360f,
+                    steps = 360
+                )
+            }
     ) {
         Box(
             modifier = Modifier.offset {
