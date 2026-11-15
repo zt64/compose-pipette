@@ -68,9 +68,7 @@ public fun SquareColorPicker(
                     awaitEachGesture {
                         val down = awaitFirstDown()
 
-                        hsvColorForPosition(down.position, size).let { (s, v) ->
-                            currentOnColorChange(currentColor().copy(saturation = s, value = v))
-                        }
+                        currentOnColorChange(currentColor().withPosition(down.position, size))
 
                         // Start drag interaction
                         val interaction = DragInteraction.Start()
@@ -80,17 +78,13 @@ public fun SquareColorPicker(
 
                         var change = awaitTouchSlopOrCancellation(down.id) { change, _ ->
                             change.consume()
-                            hsvColorForPosition(change.position, size).let { (s, v) ->
-                                currentOnColorChange(currentColor().copy(saturation = s, value = v))
-                            }
+                            currentOnColorChange(currentColor().withPosition(change.position, size))
                         }
 
                         // Continue dragging
                         while (change != null && change.pressed) {
                             change.consume()
-                            hsvColorForPosition(change.position, size).let { (s, v) ->
-                                currentOnColorChange(currentColor().copy(saturation = s, value = v))
-                            }
+                            currentOnColorChange(currentColor().withPosition(change.position, size))
                             change = awaitDragOrCancellation(change.id)
                         }
 
@@ -130,12 +124,12 @@ public fun SquareColorPicker(
     }
 }
 
-private fun hsvColorForPosition(position: Offset, size: IntSize): Pair<Float, Float> {
+private fun HsvColor.withPosition(position: Offset, size: IntSize): HsvColor {
     val clampedX = position.x.coerceIn(0f, size.width.toFloat())
     val clampedY = position.y.coerceIn(0f, size.height.toFloat())
 
     val saturation = clampedX / size.width
     val value = 1f - (clampedY / size.height)
 
-    return Pair(saturation, value)
+    return this.copy(saturation = saturation, value = value)
 }
